@@ -1,0 +1,40 @@
+# AI Chat Archive
+
+> AI Chat Archive is a Chrome extension that exports Claude.ai conversations — including
+> uploaded attachments and Claude-generated artifacts — to PDF, HTML, or Markdown.
+> It runs entirely in the user's browser; nothing is uploaded anywhere. A free tier
+> supports one-off exports; a paid license unlocks bulk export of every conversation
+> at once, bundled as a ZIP.
+
+This file follows the [llms.txt proposal](https://llmstxt.org/). For the full concatenated
+text of every document in this repository, see [`llms-full.txt`](/llms-full.txt).
+
+## Product
+
+- [Overview and install guide](/docs/getting-started.md): what the extension does and how to set it up.
+- [Features](/docs/features.md): full capability list by tier.
+- [Privacy model](/docs/privacy.md): where data flows — and doesn't.
+- [Pricing](/docs/pricing.md): free vs. paid license.
+
+## Output format specification
+
+- [Markdown format](/spec/markdown-format.md): headings, turn structure, attachment references.
+- [HTML format](/spec/html-format.md): self-contained HTML export with embedded assets.
+- [ZIP bundle structure](/spec/zip-bundle-structure.md): per-conversation folder layout for bulk export.
+
+## FAQ
+
+- [Does it send my data anywhere?](/faq/does-it-send-data-anywhere.md)
+- [How does it handle Claude Artifacts?](/faq/how-does-it-handle-artifacts.md)
+- [PDF vs HTML vs Markdown — which should I pick?](/faq/pdf-vs-html-vs-markdown.md)
+
+## Integrations
+
+- [Obsidian vault template](/integrations/obsidian/)
+- [Notion import recipe](/integrations/notion/)
+
+## Optional
+
+- [Changelog](/docs/changelog.md)
+- [Website](https://aichatarchive.app)
+- [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/)
