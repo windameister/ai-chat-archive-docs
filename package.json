@@ -1,0 +1,14 @@
+{
+  "name": "ai-chat-archive-docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Documentation site build for AI Chat Archive.",
+  "scripts": {
+    "build": "node build.js",
+    "deploy": "npm run build && npx wrangler pages deploy _build --project-name=ai-chat-archive-docs --commit-dirty=true --branch=main"
+  },
+  "dependencies": {
+    "marked": "^12.0.2"
+  }
+}

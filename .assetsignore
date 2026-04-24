@@ -1,0 +1,7 @@
+.git/
+.gitignore
+.assetsignore
+_config.yml
+LICENSE
+CONTRIBUTING.md
+DEPLOY.md

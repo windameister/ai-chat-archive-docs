@@ -1,138 +1,114 @@
 # Deployment guide — `docs.aichatarchive.app`
 
 This is the one-time setup for publishing this docs repo to
-**<https://docs.aichatarchive.app>** via GitHub Pages. The guide assumes
-you already own `aichatarchive.app` and manage its DNS in Cloudflare (inferred
-from the site repo's `wrangler.jsonc`).
+**<https://docs.aichatarchive.app>** via Cloudflare Pages.
 
-Everything below is a one-time configuration. After it's done, `git push` is the
-entire publish workflow — Pages rebuilds on every push to `main` within ~60 seconds.
+We pick Cloudflare Pages over GitHub Pages because:
 
-## Step 1. Create the GitHub repo and push
+- The main site (`aichatarchive.app`) is already on Cloudflare Pages — same infra
+  pattern.
+- Cloudflare's edge is faster than GitHub Pages.
+- Cloudflare's GitHub App is already installed on this account, so connecting a
+  new repo takes 30 seconds.
 
-From the repo root:
+After setup, `git push` to `main` is the entire publish workflow — Pages rebuilds
+and goes live in ~30 seconds.
 
-```bash
-# Stage everything and make the first commit
-git add -A
-git commit -m "Initial commit: docs repo scaffold for AI Chat Archive"
+## Step 1. The repo is already on GitHub (public)
 
-# Create the repo on GitHub (public) and push
-gh repo create windameister/ai-chat-archive-docs \
-  --public \
-  --source=. \
-  --remote=origin \
-  --description "Public documentation for AI Chat Archive — a Chrome extension that exports Claude.ai conversations." \
-  --push
-```
+The docs repo lives at <https://github.com/windameister/ai-chat-archive-docs> with
+`main` as the default branch. Already pushed; nothing to do here.
 
-If you prefer the GitHub UI: create an empty public repo named
-`ai-chat-archive-docs`, then:
+## Step 2. Connect Cloudflare Pages to the repo
 
-```bash
-git remote add origin git@github.com:windameister/ai-chat-archive-docs.git
-git branch -M main
-git push -u origin main
-```
+1. Go to <https://dash.cloudflare.com> → **Workers & Pages** → **Create**.
+2. Pick **Pages** → **Connect to Git**.
+3. Select **GitHub** → **windameister/ai-chat-archive-docs**.
+4. Click **Begin setup**.
 
-## Step 2. Enable GitHub Pages
+## Step 3. Build settings
 
-Once the repo is on GitHub:
+Enter these in the Pages setup wizard:
 
-1. Go to `https://github.com/windameister/ai-chat-archive-docs/settings/pages`.
-2. Under **Source**, select **Deploy from a branch**.
-3. Under **Branch**, pick **`main`** and the folder **`/` (root)**.
-4. Click **Save**.
+| Field | Value |
+|---|---|
+| **Project name** | `ai-chat-archive-docs` |
+| **Production branch** | `main` |
+| **Framework preset** | None |
+| **Build command** | `npm install && npm run build` |
+| **Build output directory** | `_build` |
+| **Root directory** | *(leave blank)* |
+| **Environment variables** | *(none needed)* |
 
-GitHub starts the first build. It takes 30–120 seconds. When done, the page shows:
+The `npm run build` script runs `node build.js`, which renders every `.md` to a
+themed HTML page under `_build/` while also keeping the raw `.md` accessible
+for LLM crawlers. See [`build.js`](build.js) for the source.
 
-> Your site is live at `https://windameister.github.io/ai-chat-archive-docs/`
+Click **Save and Deploy**. The first build runs (~45 seconds) and deploys to
+`https://ai-chat-archive-docs.pages.dev`.
 
-Open that URL to confirm the site is rendering before moving on.
+## Step 4. Add the custom domain
 
-## Step 3. Attach the custom domain
+Once the first deploy succeeds:
 
-The `CNAME` file in this repo already contains `docs.aichatarchive.app`, so when
-GitHub Pages builds the site it automatically expects that domain.
+1. In the Pages project, go to **Custom domains** → **Set up a custom domain**.
+2. Enter `docs.aichatarchive.app`.
+3. Click **Continue**.
+4. Cloudflare auto-creates the necessary DNS record (since the zone is on the
+   same Cloudflare account). HTTPS is provisioned automatically.
 
-1. Go back to the Pages settings page.
-2. Under **Custom domain**, enter `docs.aichatarchive.app` (should already be filled
-   in from the `CNAME` file).
-3. Leave **Enforce HTTPS** **unchecked for now** — you need DNS to propagate first.
-
-## Step 4. Add the DNS record in Cloudflare
-
-In the Cloudflare dashboard for `aichatarchive.app`, add a **CNAME** record:
-
-| Type | Name | Target | Proxy status |
-|---|---|---|---|
-| `CNAME` | `docs` | `windameister.github.io` | **DNS only (gray cloud)** |
-
-**Important:** set the proxy to **DNS only** (gray cloud, not orange). GitHub
-Pages handles its own TLS. If Cloudflare proxies the request, you hit
-certificate-chain issues.
-
-Wait 5–10 minutes. You can watch propagation with:
+Wait 60 seconds, then:
 
 ```bash
-dig docs.aichatarchive.app +short
-# Expected output:
-# windameister.github.io.
-# 185.199.108.153
-# 185.199.109.153
-# 185.199.110.153
-# 185.199.111.153
+curl -sIL https://docs.aichatarchive.app --noproxy "*" | head -5
+# Expected: HTTP/2 200, content-type: text/html
 ```
 
-## Step 5. Enable HTTPS
+## Step 5. Verify LLM-friendliness
 
-Once DNS resolves:
-
-1. Back in the repo's Pages settings, wait for **"DNS check successful"** to
-   appear next to your custom domain.
-2. Check **Enforce HTTPS**.
-3. Pages provisions a Let's Encrypt certificate automatically (takes 5–20
-   minutes). Wait until the banner disappears.
-
-Verify:
+After the site is live, check that raw markdown URLs still work alongside the
+rendered HTML:
 
 ```bash
-curl -I https://docs.aichatarchive.app
-# Expected: HTTP/2 200, strict-transport-security header
+curl -s https://docs.aichatarchive.app/llms.txt          | head -5
+curl -s https://docs.aichatarchive.app/docs/privacy.md   | head -5
+curl -s https://docs.aichatarchive.app/llms-full.txt     | head -5
 ```
+
+All three should return raw text content (`text/plain` for `.txt`,
+`text/markdown` for `.md`).
 
 ## Step 6. Link the docs from the main site
 
-Edit `aichatarchive-site` (the main site repo) and add a link in the footer:
+Edit `aichatarchive-site` (private) and add a footer link:
 
 ```html
 <a href="https://docs.aichatarchive.app">Docs</a>
 ```
 
-This step matters for SEO — Google's link graph picks up the signal that the docs
-subdomain is authoritative because the main domain links to it.
+Push it. CF Pages auto-rebuilds the main site. The reverse links in this repo
+already exist (in `README.md`, `index.md`, `llms.txt`).
 
-Also add a reverse link (already in this repo's `README.md` and `index.md`).
+This step matters for SEO — Google's link graph picks up the signal that the
+docs subdomain is authoritative because the main domain links to it.
 
-## Step 7. Verify LLM-friendliness
+## Local development
 
-After the site is live, check these URLs return the raw markdown/text files (not
-HTML-wrapped):
+Run the build locally to preview before pushing:
 
 ```bash
-curl https://docs.aichatarchive.app/llms.txt
-# Should return the raw llms.txt content, not a Jekyll-rendered HTML page.
-
-curl https://docs.aichatarchive.app/llms-full.txt
-# Same — raw text of the full concatenated docs.
+cd ai-chat-archive-docs
+npm install
+npm run build
+# Open _build/index.html in a browser, or run:
+npx serve _build
 ```
 
-If either returns an HTML page, check that `_config.yml` has them in the `include:`
-list (they should — this repo's config already does).
+`build.js` is intentionally tiny (~150 lines, one dependency). If you want a
+fancier docs theme later (search, versioning, dark mode), swap to MkDocs,
+VitePress, or Astro Starlight — the `_build` directory contract stays the same.
 
 ## Ongoing workflow
-
-After setup, publishing new docs is just:
 
 ```bash
 # Edit files locally…
@@ -140,38 +116,49 @@ git add .
 git commit -m "docs: add FAQ on Claude API rate limits"
 git push
 
-# Pages rebuilds automatically. Changes live in ~60 seconds.
+# Cloudflare Pages auto-rebuilds. Live in ~30 seconds.
 ```
 
-## If you'd rather use Cloudflare Pages instead of GitHub Pages
+## Optional: deploy via Wrangler CLI
 
-Skip Step 2–3 above. In Cloudflare dashboard → Pages → **Connect to Git** →
-select this repo → build settings:
+If you ever want to push a one-off deploy without committing (e.g., previewing
+a draft):
 
-- **Build command:** *(leave empty — static site)*
-- **Build output directory:** `/`
-- **Framework preset:** none
+```bash
+# 1. Authenticate (creates an API token under the hood)
+export CLOUDFLARE_API_TOKEN=<your-pages-token>
 
-After first build, in Pages → **Custom domains**, add `docs.aichatarchive.app`.
-Cloudflare auto-configures DNS + TLS.
+# 2. Build and deploy
+npm run deploy   # = npm run build && npx wrangler pages deploy _build ...
+```
 
-Trade-off: Pages' Jekyll preview (the theme rendering, syntax highlighting) won't
-happen — Cloudflare Pages serves raw markdown as `.md` files. Good for LLMs, worse
-for human browsers who'd see unstyled markdown. Decide based on whether the docs are
-primarily consumed by humans (GitHub Pages + Jekyll) or by machines (Cloudflare Pages,
-raw markdown).
-
-The default choice in this repo (Jekyll + GitHub Pages) is fine for both — the
-rendered HTML is still parseable by LLMs, and humans get a clean themed site.
+To create the API token: <https://dash.cloudflare.com/profile/api-tokens> →
+**Create Token** → template **Edit Cloudflare Workers** (covers Pages).
+Account scope: your CF account. Zone scope: All zones (so wrangler can also
+configure the custom domain).
 
 ## Post-launch SEO checklist
 
-After the site is live at `docs.aichatarchive.app`:
-
-- [ ] Submit sitemap to Google Search Console:
-      `https://docs.aichatarchive.app/sitemap.xml`
+- [ ] Submit sitemap to Google Search Console: this site auto-emits a basic
+      navigation; you can also publish `/sitemap.xml` later by extending
+      `build.js`.
 - [ ] Submit to Bing Webmaster Tools.
+- [ ] Verify `llms.txt` is reachable: `curl https://docs.aichatarchive.app/llms.txt`.
+- [ ] Check a few FAQ pages rank on Google for their target queries within 2
+      weeks (e.g., `how to export claude chat`).
 - [ ] Add the docs URL to the main site's `robots.txt` as a permitted sitemap
       entry.
-- [ ] Verify `llms.txt` is reachable and valid.
-- [ ] Check a few FAQ pages rank on Google for their target queries within 2 weeks.
+
+## If you ever want to ditch CF Pages
+
+Two alternatives, in case Cloudflare goes sideways:
+
+- **GitHub Pages**: this repo also has a Jekyll-compatible `_config.yml` and
+  `CNAME`. Toggle it on at
+  `https://github.com/windameister/ai-chat-archive-docs/settings/pages` →
+  Source `main / (root)`. CF DNS just needs `docs` → `windameister.github.io`
+  (gray cloud).
+- **Vercel / Netlify**: connect the repo, build command `npm run build`, output
+  directory `_build`. Same setup.
+
+The build is portable; the deploy target is just configuration.
