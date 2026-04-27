@@ -10,14 +10,15 @@ import { marked } from 'marked';
 const SRC = '.';
 const OUT = '_build';
 
-// Cloudflare Web Analytics beacon — token comes from the build environment so
-// it stays out of the repo. Set CF_ANALYTICS_TOKEN in the CF Pages project's
-// environment variables (Settings → Environment variables → Production).
-// When unset (e.g. local dev), no beacon is injected.
-const CF_ANALYTICS_TOKEN = process.env.CF_ANALYTICS_TOKEN || '';
-
 const BASE_URL = 'https://docs.aichatarchive.app';
 const SITE_NAME = 'AI Chat Archive Documentation';
+
+// Note on Web Analytics: this site is served through Cloudflare, and the
+// `aichatarchive.app` zone has CF Web Analytics auto-inject enabled at the
+// edge. The beacon is added to HTML responses by Cloudflare, not by this
+// build, so there is intentionally no analytics injection in `wrap()`.
+// If we ever switch off auto-inject (e.g. to use Plausible/Umami), inject
+// the snippet inside `wrap()` next to <link rel="canonical">.
 
 const SKIP_DIRS = new Set([
   '.git', 'node_modules', '_build', '.wrangler',
@@ -64,12 +65,6 @@ const wrap = (title, body, currentPath, schema) => {
     ? `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
     : '';
 
-  // Cloudflare Web Analytics — only emitted when CF_ANALYTICS_TOKEN is set
-  // in the build environment. Privacy-friendly, no cookies, no PII.
-  const analyticsBlock = CF_ANALYTICS_TOKEN
-    ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${CF_ANALYTICS_TOKEN}"}'></script>`
-    : '';
-
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -79,7 +74,6 @@ const wrap = (title, body, currentPath, schema) => {
   <meta name="description" content="Documentation for AI Chat Archive — a Chrome extension that exports Claude.ai conversations to PDF, HTML, or Markdown.">
   <link rel="canonical" href="${BASE_URL}${currentPath}">
   ${schemaBlock}
-  ${analyticsBlock}
   <style>
     :root {
       --brand: #c96442;
