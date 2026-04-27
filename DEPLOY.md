@@ -153,10 +153,11 @@ configure the custom domain).
 
 Two alternatives, in case Cloudflare goes sideways:
 
-- **GitHub Pages**: this repo also has a Jekyll-compatible `_config.yml` and
-  `CNAME`. Toggle it on at
+- **GitHub Pages**: enable at
   `https://github.com/windameister/ai-chat-archive-docs/settings/pages` →
-  Source `main / (root)`. CF DNS just needs `docs` → `windameister.github.io`
+  Source: **GitHub Actions**, then add a workflow that runs `npm run build`
+  and uploads `_build/` as the Pages artifact. CF DNS just needs `docs` →
+  `windameister.github.io`
   (gray cloud).
 - **Vercel / Netlify**: connect the repo, build command `npm run build`, output
   directory `_build`. Same setup.
