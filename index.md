@@ -1,11 +1,3 @@
----
-layout: home
-title: AI Chat Archive — Documentation
-description: >-
-  Documentation for AI Chat Archive — the Chrome extension that exports Claude.ai
-  conversations to PDF, HTML, or Markdown, entirely in your browser.
----
-
 # AI Chat Archive — Documentation
 
 **[AI Chat Archive](https://aichatarchive.app)** is a Chrome extension that exports

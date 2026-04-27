@@ -179,8 +179,19 @@ function urlPathFor(srcPath) {
   return '/' + srcPath.replace(/\.md$/, '/');
 }
 
+// Strip Jekyll-style YAML front matter (`---\n...\n---\n`) from the head of
+// a markdown file. Future-proofs the build against any source file that
+// carries SEO/meta metadata at the top.
+function stripFrontMatter(md) {
+  if (!md.startsWith('---\n')) return md;
+  const end = md.indexOf('\n---\n', 4);
+  if (end === -1) return md;
+  return md.slice(end + 5).replace(/^\n+/, '');
+}
+
 async function buildOne(srcPath) {
-  const raw = await readFile(srcPath, 'utf8');
+  const fileRaw = await readFile(srcPath, 'utf8');
+  const raw = stripFrontMatter(fileRaw);
   const isIndex = srcPath === 'index.md';
   const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || basename(srcPath, '.md');
   const adjusted = rewriteLinks(raw, srcPath);
