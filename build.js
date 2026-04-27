@@ -10,6 +10,15 @@ import { marked } from 'marked';
 const SRC = '.';
 const OUT = '_build';
 
+// Cloudflare Web Analytics beacon — token comes from the build environment so
+// it stays out of the repo. Set CF_ANALYTICS_TOKEN in the CF Pages project's
+// environment variables (Settings → Environment variables → Production).
+// When unset (e.g. local dev), no beacon is injected.
+const CF_ANALYTICS_TOKEN = process.env.CF_ANALYTICS_TOKEN || '';
+
+const BASE_URL = 'https://docs.aichatarchive.app';
+const SITE_NAME = 'AI Chat Archive Documentation';
+
 const SKIP_DIRS = new Set([
   '.git', 'node_modules', '_build', '.wrangler',
 ]);
@@ -44,10 +53,23 @@ async function* walk(dir) {
   }
 }
 
-const wrap = (title, body, currentPath) => {
+const wrap = (title, body, currentPath, schema) => {
   // Build a "..back to home" crumb only when not at root
   const crumb = currentPath === '/' ? '' :
     `<nav class="crumbs"><a href="/">← AI Chat Archive Docs</a></nav>`;
+
+  // schema.org JSON-LD block — improves how the page appears in Google's
+  // search results (rich snippets for FAQ, article markup for docs).
+  const schemaBlock = schema
+    ? `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
+    : '';
+
+  // Cloudflare Web Analytics — only emitted when CF_ANALYTICS_TOKEN is set
+  // in the build environment. Privacy-friendly, no cookies, no PII.
+  const analyticsBlock = CF_ANALYTICS_TOKEN
+    ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${CF_ANALYTICS_TOKEN}"}'></script>`
+    : '';
+
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -55,7 +77,9 @@ const wrap = (title, body, currentPath) => {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)} — AI Chat Archive Docs</title>
   <meta name="description" content="Documentation for AI Chat Archive — a Chrome extension that exports Claude.ai conversations to PDF, HTML, or Markdown.">
-  <link rel="canonical" href="https://docs.aichatarchive.app${currentPath}">
+  <link rel="canonical" href="${BASE_URL}${currentPath}">
+  ${schemaBlock}
+  ${analyticsBlock}
   <style>
     :root {
       --brand: #c96442;
@@ -196,6 +220,88 @@ function urlPathFor(srcPath) {
   return '/' + srcPath.replace(/\.md$/, '/');
 }
 
+// Extract a "short answer" — the first paragraph after the H1 — from an FAQ
+// markdown file, with markdown formatting flattened to plain prose. Used as
+// the `acceptedAnswer.text` in the QAPage JSON-LD.
+function extractShortAnswer(md) {
+  const lines = md.split('\n');
+  let foundH1 = false;
+  const para = [];
+  for (const line of lines) {
+    if (!foundH1) {
+      if (/^#\s+/.test(line)) foundH1 = true;
+      continue;
+    }
+    if (line.trim() === '' && para.length === 0) continue;
+    if (line.trim() === '') break;
+    para.push(line);
+  }
+  return para.join(' ')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Build the schema.org JSON-LD object for a given page. Returns null for
+// pages we don't want to mark up (e.g. examples). Conventions:
+//   /                  -> WebSite + publisher Organization
+//   /faq/*             -> QAPage with mainEntity Question + acceptedAnswer
+//   /docs/* or /spec/* -> TechArticle
+function buildSchema(srcPath, title, md, urlPath) {
+  const fullUrl = BASE_URL + urlPath;
+  const publisher = {
+    "@type": "Organization",
+    name: "AI Chat Archive",
+    url: "https://aichatarchive.app",
+  };
+
+  if (urlPath === '/') {
+    return {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: BASE_URL,
+      publisher,
+    };
+  }
+
+  if (urlPath.startsWith('/faq/')) {
+    const answer = extractShortAnswer(md);
+    return {
+      "@context": "https://schema.org",
+      "@type": "QAPage",
+      url: fullUrl,
+      mainEntity: {
+        "@type": "Question",
+        name: title,
+        text: title,
+        answerCount: 1,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: answer,
+          url: fullUrl,
+        },
+      },
+    };
+  }
+
+  if (urlPath.startsWith('/docs/') || urlPath.startsWith('/spec/')) {
+    return {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: title,
+      url: fullUrl,
+      publisher,
+    };
+  }
+
+  // Other paths (examples/, integrations/) — no schema for now.
+  return null;
+}
+
 // Strip Jekyll-style YAML front matter (`---\n...\n---\n`) from the head of
 // a markdown file. Future-proofs the build against any source file that
 // carries SEO/meta metadata at the top.
@@ -214,7 +320,8 @@ async function buildOne(srcPath) {
   const adjusted = rewriteLinks(raw, srcPath);
   const bodyHtml = marked.parse(adjusted, { gfm: true, breaks: false });
   const urlPath = urlPathFor(srcPath);
-  const html = wrap(title, bodyHtml, urlPath);
+  const schema = buildSchema(srcPath, title, raw, urlPath);
+  const html = wrap(title, bodyHtml, urlPath, schema);
 
   // Write raw markdown alongside HTML so LLMs can still fetch canonical .md
   const rawOut = join(OUT, srcPath);
