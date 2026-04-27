@@ -6,7 +6,7 @@ Claude-generated artifacts — entirely inside your browser. Nothing is uploaded
 
 This site is the **public documentation**. For the product itself, see
 [aichatarchive.app](https://aichatarchive.app) or
-[install from the Chrome Web Store](https://chromewebstore.google.com/detail/ai-chat-archive/).
+[install from the Chrome Web Store](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 
 ## Start here
 

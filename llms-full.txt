@@ -110,7 +110,7 @@ It takes about two minutes.
 
 ## 1. Install from the Chrome Web Store
 
-1. Open the [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/).
+1. Open the [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 2. Click **Add to Chrome**.
 3. When prompted, approve the permissions (see [Privacy](privacy.md) for what each
    permission does).
@@ -492,7 +492,7 @@ FILE: docs/changelog.md
 # Changelog
 
 Release notes for AI Chat Archive. For a live feed of fixes between releases, see
-the [extension's Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/).
+the [extension's Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
@@ -1720,7 +1720,7 @@ Works in a pinch. Not great for archival.
 
 A Chrome extension purpose-built for Claude export.
 
-1. Install [AI Chat Archive](https://chromewebstore.google.com/detail/ai-chat-archive/)
+1. Install [AI Chat Archive](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj)
    from the Chrome Web Store.
 2. Open any Claude.ai conversation.
 3. Click the extension icon in the toolbar.

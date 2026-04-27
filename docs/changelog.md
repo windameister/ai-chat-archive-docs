@@ -1,7 +1,7 @@
 # Changelog
 
 Release notes for AI Chat Archive. For a live feed of fixes between releases, see
-the [extension's Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/).
+the [extension's Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 

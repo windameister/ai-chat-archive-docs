@@ -46,7 +46,7 @@ Works in a pinch. Not great for archival.
 
 A Chrome extension purpose-built for Claude export.
 
-1. Install [AI Chat Archive](https://chromewebstore.google.com/detail/ai-chat-archive/)
+1. Install [AI Chat Archive](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj)
    from the Chrome Web Store.
 2. Open any Claude.ai conversation.
 3. Click the extension icon in the toolbar.

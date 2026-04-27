@@ -5,7 +5,7 @@ It takes about two minutes.
 
 ## 1. Install from the Chrome Web Store
 
-1. Open the [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/).
+1. Open the [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 2. Click **Add to Chrome**.
 3. When prompted, approve the permissions (see [Privacy](privacy.md) for what each
    permission does).

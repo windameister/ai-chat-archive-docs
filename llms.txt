@@ -37,4 +37,4 @@ text of every document in this repository, see [`llms-full.txt`](/llms-full.txt)
 
 - [Changelog](/docs/changelog.md)
 - [Website](https://aichatarchive.app)
-- [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/)
+- [Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj)
