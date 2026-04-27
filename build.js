@@ -16,7 +16,7 @@ const SKIP_DIRS = new Set([
 
 const SKIP_FILES = new Set([
   // Tooling / repo metadata that shouldn't be served
-  'package.json', 'package-lock.json', 'build.js',
+  'package.json', 'package-lock.json', 'build.js', 'bun.lock',
   '_config.yml', '.gitignore', '.assetsignore',
   // GitHub-only files (not for the published site)
   'CONTRIBUTING.md', 'DEPLOY.md', 'LICENSE', 'CNAME',
@@ -24,12 +24,23 @@ const SKIP_FILES = new Set([
   'index.md',
 ]);
 
+// Paths (not just basenames) to skip. The repo-root README.md exists for
+// GitHub's repo overview but is redundant with index.md on the deployed site.
+// Nested README.md files (e.g. integrations/obsidian/README.md) are kept and
+// become their containing directory's index page.
+const SKIP_PATHS = new Set([
+  'README.md',
+]);
+
 async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (SKIP_DIRS.has(entry.name)) continue;
     const path = join(dir, entry.name);
-    if (entry.isDirectory()) yield* walk(path);
-    else if (!SKIP_FILES.has(entry.name)) yield path;
+    if (entry.isDirectory()) {
+      yield* walk(path);
+    } else if (!SKIP_FILES.has(entry.name) && !SKIP_PATHS.has(relative(SRC, path))) {
+      yield path;
+    }
   }
 }
 
@@ -171,11 +182,17 @@ function rewriteLinks(md, fromPath) {
 
 // Compute the URL path a source file maps to in the built site.
 // Examples:
-//   index.md          -> /
-//   docs/privacy.md   -> /docs/privacy/
-//   spec/zip-bundle-structure.md -> /spec/zip-bundle-structure/
+//   index.md                              -> /
+//   docs/privacy.md                       -> /docs/privacy/
+//   spec/zip-bundle-structure.md          -> /spec/zip-bundle-structure/
+//   integrations/obsidian/README.md       -> /integrations/obsidian/
+//   examples/README.md                    -> /examples/
 function urlPathFor(srcPath) {
   if (srcPath === 'index.md') return '/';
+  if (basename(srcPath) === 'README.md') {
+    const dir = dirname(srcPath);
+    return dir === '.' ? '/' : '/' + dir + '/';
+  }
   return '/' + srcPath.replace(/\.md$/, '/');
 }
 
@@ -204,14 +221,43 @@ async function buildOne(srcPath) {
   await mkdir(dirname(rawOut), { recursive: true });
   await writeFile(rawOut, raw);
 
-  // Write HTML at the clean URL (directory/index.html for non-root, root index.html for index.md)
+  // Write HTML at the clean URL.
+  //   index.md             -> _build/index.html
+  //   foo/README.md        -> _build/foo/index.html  (directory index)
+  //   foo/bar.md           -> _build/foo/bar/index.html
   if (isIndex) {
     await writeFile(join(OUT, 'index.html'), html);
+  } else if (basename(srcPath) === 'README.md') {
+    const targetDir = join(OUT, dirname(srcPath));
+    await mkdir(targetDir, { recursive: true });
+    await writeFile(join(targetDir, 'index.html'), html);
   } else {
     const dir = join(OUT, srcPath.replace(/\.md$/, ''));
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, 'index.html'), html);
   }
+}
+
+// Write a sitemap.xml listing every URL the site exposes. Helps Google
+// Search Console + Bing Webmaster Tools index everything quickly.
+async function writeSitemap(srcPaths) {
+  const today = new Date().toISOString().slice(0, 10);
+  const baseUrl = 'https://docs.aichatarchive.app';
+  const urls = srcPaths
+    .filter(p => p.endsWith('.md'))
+    .map(p => urlPathFor(p))
+    .filter((p, i, arr) => arr.indexOf(p) === i)  // dedupe
+    .sort();
+
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...urls.map(u => `  <url><loc>${baseUrl}${u}</loc><lastmod>${today}</lastmod></url>`),
+    '</urlset>',
+    '',
+  ].join('\n');
+
+  await writeFile(join(OUT, 'sitemap.xml'), xml);
 }
 
 async function copyAsIs(srcPath) {
@@ -223,11 +269,14 @@ async function copyAsIs(srcPath) {
 async function build() {
   if (!existsSync(OUT)) await mkdir(OUT, { recursive: true });
 
+  const builtPaths = [];
+
   // Render every .md (except SKIP_FILES) to HTML + keep raw .md
   for await (const path of walk(SRC)) {
     const rel = relative(SRC, path);
     if (extname(rel) === '.md') {
       await buildOne(rel);
+      builtPaths.push(rel);
     } else {
       await copyAsIs(rel);
     }
@@ -236,9 +285,12 @@ async function build() {
   // index.md is special: served at root
   if (existsSync('index.md')) {
     await buildOne('index.md');
+    builtPaths.push('index.md');
   }
 
-  console.log(`✓ Built site to ${OUT}/`);
+  await writeSitemap(builtPaths);
+
+  console.log(`✓ Built site to ${OUT}/ (${builtPaths.length} pages)`);
 }
 
 build().catch(err => {
