@@ -5,6 +5,114 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.2.141 — May 2026 — Claude-style theme is the default
+
+- HTML and PDF exports now default to a warmer cream-and-serif theme
+  that mirrors reading a chat on claude.ai. The cleaner archival look
+  is still available as **Document** theme in popup → Advanced →
+  Export theme.
+- Existing users who explicitly chose Document on a dev build keep
+  their preference; everyone else picks up the new default on the
+  first export after updating.
+
+## v0.2.139 — May 2026 — Claude-style PDF goes full-bleed
+
+- The cream now reaches the paper edges instead of leaving a 14 mm
+  white frame around the content. PDF print path moved from
+  `@page margin` to `body padding` so the page itself is full-bleed
+  while the content keeps its breathing room.
+- Document theme PDFs unchanged — the historical 14 mm `@page` margin
+  is preserved so headers/footers Chrome draws there have somewhere
+  to live.
+- For the cream to actually print: tick **Background graphics** in
+  Chrome's print dialog. The in-page tip banner calls this out
+  prominently and Chrome remembers the toggle next time.
+
+## v0.2.135 — May 2026 — Claude-style export theme (opt-in)
+
+- New optional theme that uses Iowan Old Style / Charter for Latin
+  body text, Songti SC / Hiragino Mincho for CJK, and a warm
+  `#f9f5ee` page background. Reads like a printed page from the
+  Claude web app.
+- popup → Advanced → Export theme — pick **Claude-style** or
+  **Document**; the default is Document until the v0.2.141
+  switch above.
+- Phase 2 typography lift in the same release: Hiragino Sans GB
+  and Heiti SC added to the default font fallback stack alongside
+  the existing PingFang SC / Microsoft YaHei, so Japanese and older
+  macOS Chinese render in the right visual register.
+
+## v0.2.133 — April 2026 — Markdown rendering polish
+
+- GFM tables (`| col | col |` style) now render as proper `<table>`
+  elements with header / body, alignment, and inline-md inside cells.
+  Used to leak as raw pipe-and-dash text in HTML/PDF exports.
+- v0.2.134 follow-up: ATX headings (`#` through `######`), horizontal
+  rules (`---`, `***`, `___`), blockquotes (`> …`), and inline
+  links (`[label](url)`) all render in HTML/PDF exports. Markdown
+  exports were already fine — this closes the gap between the two.
+
+## v0.2.121 — April 2026 — Visualize-widget export
+
+- Claude's inline visualize widgets — SVG diagrams and HTML mockups
+  Claude generates via `show_widget` — now ship inside HTML/PDF/MD
+  exports instead of being silently dropped, and land as sibling
+  `.svg` / `.html` files in the per-conversation folder of bulk-export
+  ZIPs.
+- v0.2.127 follow-up: colored diagram nodes (`c-blue`, `c-amber`,
+  `c-green`, etc.) now keep their colors in the exported SVG. They
+  used to collapse to all-black flowcharts because Claude's runtime
+  CSS didn't travel with the export.
+
+## v0.2.128 — April 2026 — Welcome page on first install
+
+- Fresh installs open the [aichatarchive.app/welcome](https://aichatarchive.app/welcome)
+  walkthrough in a new tab so users find the floating Export button
+  without hunting through Chrome's puzzle-piece menu.
+- v0.2.129: welcome URL is locale-aware — Japanese-Chrome users land
+  on `/ja/welcome`, Korean on `/ko/welcome`, etc. — across the 9
+  shipping locales at the time. v0.2.132 added `/fr/welcome` to
+  bring the total to 10.
+- v0.2.130: skipped on enterprise-policy and sideloaded installs so
+  IT-managed deployments don't surprise employees with an external
+  tab.
+
+## v0.2.126 — April 2026 — Pick which messages to export
+
+- New **Choose messages…** entry on the floating Export menu opens a
+  side panel with a checkbox per turn. Pick exactly which messages
+  go into the export — useful when only the last reply is worth
+  keeping.
+- Two presets: **All** (default) and **Last turn** (last user
+  question + last Claude answer).
+- Works for every export format including PDF; the print page picks
+  up the selection via URL params.
+
+## v0.2.125 — April 2026 — Floating button → format menu
+
+- The on-page Export button used to export in a single fixed default
+  format. It now opens a small menu so you can pick Markdown / HTML /
+  PDF / JSON / Plain text per export, without having to open the
+  toolbar popup to change format. Keyboard navigation supported.
+
+## v0.2.124 — April 2026 — Localized CWS listing
+
+- Chrome Web Store listing title and short description now ship in 9
+  locales: **en, zh-CN, zh-TW, ja, ko, es, it, de, pt-BR**. Catches
+  native-language Web Store search instead of only the English-locale
+  install funnel.
+- v0.2.132 added French (fr) — 10 locales total.
+
+## v0.2.123 — April 2026 — Free unlimited PDF
+
+- Daily 3-PDF cap removed. PDF generation runs entirely on your
+  machine via the browser's print pipeline — there's no server cost
+  to cap.
+- The paid tier's three remaining benefits stand: bulk export of
+  every conversation as a ZIP, attachment bundling (real file bytes
+  alongside the transcript), and no branding footer on exported
+  files.
+
 ## v0.2.119 — April 2026
 
 - PDF quota-exceeded message wraps cleanly into two lines (fixes a layout shift).
