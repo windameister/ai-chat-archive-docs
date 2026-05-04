@@ -37,10 +37,10 @@ Versions follow Chrome's required numeric format (no semver suffixes).
 - popup → Advanced → Export theme — pick **Claude-style** or
   **Document**; the default is Document until the v0.2.141
   switch above.
-- Phase 2 typography lift in the same release: PingFang SC /
-  Hiragino Sans GB / Heiti SC added to the default font fallback
-  stack so Japanese and older macOS Chinese render in the right
-  visual register.
+- Phase 2 typography lift in the same release: Hiragino Sans GB
+  and Heiti SC added to the default font fallback stack alongside
+  the existing PingFang SC / Microsoft YaHei, so Japanese and older
+  macOS Chinese render in the right visual register.
 
 ## v0.2.133 — April 2026 — Markdown rendering polish
 
@@ -51,9 +51,18 @@ Versions follow Chrome's required numeric format (no semver suffixes).
   rules (`---`, `***`, `___`), blockquotes (`> …`), and inline
   links (`[label](url)`) all render in HTML/PDF exports. Markdown
   exports were already fine — this closes the gap between the two.
-- v0.2.127: colored diagram nodes from Claude's `visualize` widgets
-  (`c-blue`, `c-amber`, `c-green`, etc.) now keep their colors in
-  the exported SVG. They used to collapse to all-black flowcharts.
+
+## v0.2.121 — April 2026 — Visualize-widget export
+
+- Claude's inline visualize widgets — SVG diagrams and HTML mockups
+  Claude generates via `show_widget` — now ship inside HTML/PDF/MD
+  exports instead of being silently dropped, and land as sibling
+  `.svg` / `.html` files in the per-conversation folder of bulk-export
+  ZIPs.
+- v0.2.127 follow-up: colored diagram nodes (`c-blue`, `c-amber`,
+  `c-green`, etc.) now keep their colors in the exported SVG. They
+  used to collapse to all-black flowcharts because Claude's runtime
+  CSS didn't travel with the export.
 
 ## v0.2.128 — April 2026 — Welcome page on first install
 
@@ -61,8 +70,9 @@ Versions follow Chrome's required numeric format (no semver suffixes).
   walkthrough in a new tab so users find the floating Export button
   without hunting through Chrome's puzzle-piece menu.
 - v0.2.129: welcome URL is locale-aware — Japanese-Chrome users land
-  on `/ja/welcome`, Korean on `/ko/welcome`, etc. — across the 10
-  shipping locales.
+  on `/ja/welcome`, Korean on `/ko/welcome`, etc. — across the 9
+  shipping locales at the time. v0.2.132 added `/fr/welcome` to
+  bring the total to 10.
 - v0.2.130: skipped on enterprise-policy and sideloaded installs so
   IT-managed deployments don't surprise employees with an external
   tab.
@@ -89,8 +99,8 @@ Versions follow Chrome's required numeric format (no semver suffixes).
 
 - Chrome Web Store listing title and short description now ship in 9
   locales: **en, zh-CN, zh-TW, ja, ko, es, it, de, pt-BR**. Catches
-  native-language Web Store search across the 80% of CWS install
-  funnels we couldn't reach before.
+  native-language Web Store search instead of only the English-locale
+  install funnel.
 - v0.2.132 added French (fr) — 10 locales total.
 
 ## v0.2.123 — April 2026 — Free unlimited PDF
