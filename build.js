@@ -188,13 +188,30 @@ function escapeHtml(s) {
   );
 }
 
-// Rewrite relative .md links to clean URLs (drop .md, keep relative path).
+// Rewrite relative .md links to absolute clean URLs.
+//
+// Why absolute (and not just .md → /): a source file like
+// `faq/does-it-send-data-anywhere.md` becomes the URL `/faq/does-it-send-
+// data-anywhere/` post-build — a directory, not a file. A sibling-relative
+// link `(how-does-it-handle-artifacts.md)` written in that source then gets
+// rewritten to `(how-does-it-handle-artifacts/)`. Browser then resolves it
+// from the directory base as `/faq/does-it-send-data-anywhere/how-does-it-
+// handle-artifacts/` — a 404. Google hit exactly this bug; see
+// aichatarchive-site GSC report 2026-05-04.
+//
+// Resolving every relative .md link against the source file's directory and
+// emitting an absolute URL fixes it once and lets writers keep using natural
+// relative paths (which also stay correct on GitHub's source view).
 function rewriteLinks(md, fromPath) {
+  const fromDir = dirname(fromPath);
   return md.replace(/\]\(([^)\s#]+?)(\#[^)]*)?\)/g, (m, url, frag = '') => {
-    if (/^https?:|^mailto:|^#/.test(url)) return m;
+    if (/^https?:|^mailto:|^#|^\//.test(url)) return m;
     if (!url.endsWith('.md')) return m;
-    const clean = url.replace(/\.md$/, '/');
-    return `](${clean}${frag})`;
+    // Resolve the relative link against the source file's directory, then
+    // convert to a clean absolute URL: drop .md → /, normalize separators.
+    const resolved = join(fromDir, url).replace(/\\/g, '/');
+    const absolute = '/' + resolved.replace(/\.md$/, '/');
+    return `](${absolute}${frag})`;
   });
 }
 
