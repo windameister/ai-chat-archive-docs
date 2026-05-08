@@ -54,7 +54,7 @@ async function* walk(dir) {
   }
 }
 
-const wrap = (title, body, currentPath, schema) => {
+const wrap = (title, body, currentPath, schema, srcPath) => {
   // Build a "..back to home" crumb only when not at root
   const crumb = currentPath === '/' ? '' :
     `<nav class="crumbs"><a href="/">← AI Chat Archive Docs</a></nav>`;
@@ -176,7 +176,7 @@ const wrap = (title, body, currentPath, schema) => {
     <a href="https://github.com/windameister/ai-chat-archive-docs">GitHub</a>
     <span>·</span>
     <span>Licensed CC BY 4.0</span>
-    <span class="raw"><a href="${currentPath === '/' ? '/index.md' : currentPath.replace(/\/$/, '.md').replace(/^\//, '/')}">view as raw markdown</a></span>
+    <span class="raw"><a href="/${srcPath}">view as raw markdown</a></span>
   </footer>
 </body>
 </html>`;
@@ -188,13 +188,43 @@ function escapeHtml(s) {
   );
 }
 
-// Rewrite relative .md links to clean URLs (drop .md, keep relative path).
+// Rewrite relative cross-doc links to absolute clean URLs.
+//
+// Why absolute (and not just .md → /): a source file like
+// `faq/does-it-send-data-anywhere.md` becomes the URL `/faq/does-it-send-
+// data-anywhere/` post-build — a directory, not a file. A sibling-relative
+// link `(how-does-it-handle-artifacts.md)` written in that source then gets
+// rewritten to `(how-does-it-handle-artifacts/)`. Browser then resolves it
+// from the directory base as `/faq/does-it-send-data-anywhere/how-does-it-
+// handle-artifacts/` — a 404. Google hit exactly this bug; see
+// aichatarchive-site GSC report 2026-05-04.
+//
+// Resolving every relative link against the source file's directory and
+// emitting an absolute URL fixes it once and lets writers keep using natural
+// relative paths (which also stay correct on GitHub's source view).
+//
+// Two cases handled:
+//  - `.md` link → resolve, then map through urlPathFor() so `README.md`
+//    correctly becomes the parent dir URL rather than `…/README/`.
+//  - non-`.md` relative link (`../integrations/obsidian/`, `./examples/`) →
+//    resolve and emit absolute. Defense against the same dir-vs-file
+//    resolution edge case for non-`.md` references and against crawlers
+//    that don't faithfully resolve `..`.
 function rewriteLinks(md, fromPath) {
+  const fromDir = dirname(fromPath);
   return md.replace(/\]\(([^)\s#]+?)(\#[^)]*)?\)/g, (m, url, frag = '') => {
-    if (/^https?:|^mailto:|^#/.test(url)) return m;
-    if (!url.endsWith('.md')) return m;
-    const clean = url.replace(/\.md$/, '/');
-    return `](${clean}${frag})`;
+    if (/^https?:|^mailto:|^#|^\//.test(url)) return m;
+    const resolved = join(fromDir, url).replace(/\\/g, '/');
+    if (url.endsWith('.md')) {
+      return `](${urlPathFor(resolved)}${frag})`;
+    }
+    if (/^\.\.?\//.test(url)) {
+      // Strip a leading "./" if any, ensure trailing slash for directory URLs.
+      const cleaned = resolved.replace(/^\.\//, '');
+      const withSlash = cleaned.endsWith('/') ? cleaned : `${cleaned}/`;
+      return `](/${withSlash}${frag})`;
+    }
+    return m;
   });
 }
 
@@ -315,7 +345,7 @@ async function buildOne(srcPath) {
   const bodyHtml = marked.parse(adjusted, { gfm: true, breaks: false });
   const urlPath = urlPathFor(srcPath);
   const schema = buildSchema(srcPath, title, raw, urlPath);
-  const html = wrap(title, bodyHtml, urlPath, schema);
+  const html = wrap(title, bodyHtml, urlPath, schema, srcPath);
 
   // Write raw markdown alongside HTML so LLMs can still fetch canonical .md
   const rawOut = join(OUT, srcPath);
