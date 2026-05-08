@@ -1,0 +1,37 @@
+# 301 redirects for bug URLs that older builds of this site generated.
+#
+# These paths never had real pages — they were artifacts of relative-link bugs
+# in the old build pipeline (browsers / Google's crawler concatenated a
+# sibling-relative href onto the current page's directory URL, producing
+# nonsense paths like /faq/docs/privacy/ which is really /docs/privacy/).
+#
+# The link-generation bugs were fixed in PR #2 (build.js absolute-URL fix), so
+# nothing on the site points to these URLs anymore — but external sites and
+# Google's index can still hold references for a long time. These redirects
+# bridge the gap, sending any visitor or crawler that hits a bug URL to the
+# real page they meant.
+#
+# When Google re-crawls and stops referencing these URLs entirely, the
+# redirects can stay (cheap insurance) or be deleted in a future cleanup.
+#
+# Format: [from] [to] [status]
+
+# Sibling-link bug from /faq/does-it-send-data-anywhere/ → another faq page
+/faq/does-it-send-data-anywhere/how-does-it-handle-artifacts/  /faq/how-does-it-handle-artifacts/  301
+
+# Cross-doc relative-link bugs from /faq/ pages → /docs/* targets
+/faq/docs/features/  /docs/features/  301
+/faq/docs/privacy/   /docs/privacy/   301
+
+# Cross-doc relative-link bugs from /faq/ pages → /spec/* targets
+/faq/spec/zip-bundle-structure/  /spec/zip-bundle-structure/  301
+
+# Cross-doc relative-link bugs from /docs/ pages → /spec/* targets
+/docs/spec/                        /spec/                       301
+/docs/spec/zip-bundle-structure/   /spec/zip-bundle-structure/  301
+
+# Sibling-link bugs from /docs/features/ → other /docs/ siblings
+/docs/features/pricing/         /docs/pricing/          301
+/docs/features/changelog/       /docs/changelog/        301
+/docs/features/privacy/         /docs/privacy/          301
+/docs/features/getting-started/ /docs/getting-started/  301

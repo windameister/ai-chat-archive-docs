@@ -27,6 +27,7 @@ const SKIP_DIRS = new Set([
 const SKIP_FILES = new Set([
   // Tooling / repo metadata that shouldn't be served
   'package.json', 'package-lock.json', 'build.js', 'bun.lock',
+  'wrangler.jsonc', 'wrangler.toml',
   '_config.yml', '.gitignore', '.assetsignore',
   // GitHub-only files (not for the published site)
   'CONTRIBUTING.md', 'DEPLOY.md', 'LICENSE', 'CNAME',
