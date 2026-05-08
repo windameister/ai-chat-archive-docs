@@ -1,0 +1,19 @@
+// Cloudflare Workers Builds config.
+//
+// CF migrated this project from Pages → Workers Builds. The post-build deploy
+// step (`npx wrangler versions upload`) needs to know where the static-asset
+// directory is. Without this file the deploy errors out with "Missing
+// entry-point to Worker script or to assets directory" — which is what was
+// blocking PR builds 2026-05-08.
+//
+// `npm run build` writes the rendered site into `_build/`; this file points
+// wrangler at it.
+{
+  "$schema": "https://cloudflare.com/wrangler-schema.json",
+  "name": "ai-chat-archive-docs",
+  "compatibility_date": "2026-05-08",
+  "assets": {
+    "directory": "./_build",
+    "not_found_handling": "404-page"
+  }
+}
