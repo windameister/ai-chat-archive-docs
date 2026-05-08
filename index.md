@@ -32,6 +32,10 @@ Canonical spec for what the extension produces:
 - [HTML format](/spec/html-format/)
 - [ZIP bundle structure](/spec/zip-bundle-structure/)
 
+Open-source console snippets — paste into DevTools to export without installing:
+
+- [Console snippets (Markdown + JSON)](/spec/console-snippet/) — MIT-licensed, no install, no extension required
+
 Drop-in templates for downstream tools:
 
 - [Obsidian vault template + Dataview queries](/integrations/obsidian/)
@@ -51,4 +55,7 @@ single file is at [`/llms-full.txt`](/llms-full.txt).
 This documentation is **[open to contributions](https://github.com/windameister/ai-chat-archive-docs)** under CC BY 4.0. Typos, new FAQs, new integrations — PRs welcome.
 
 The AI Chat Archive browser extension itself is a commercial product. Its source
-code is not open source.
+code is not open source. The minimal [console snippets](/spec/console-snippet/)
+above are an MIT-licensed reference implementation of the Markdown export path —
+enough to back the "open-source console scripts" claim in the Chrome Web Store
+listing without exposing the extension's full feature surface.
