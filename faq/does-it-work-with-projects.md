@@ -34,15 +34,18 @@ A single ZIP, named after the project, containing:
   - Text knowledge docs as Markdown.
   - Uploaded binaries (PDF, images, etc.) in their original format.
   - `_INDEX.md` — table listing every file with its type and date, written
-    after the ZIP is finalized so the names in the index match what's actually
-    on disk.
-  - `_SKIPPED.md` — only present if some files failed to download.
+    after all knowledge files have been added to the archive (and any
+    cancelled tail recorded) so the names in the index match what was
+    actually written.
+  - `_SKIPPED.md` — only present if some files failed to download or you
+    cancelled mid-run.
 - **`conversations/`** — one folder per chat, named `<date>_<title>`. Each
   folder holds the transcript in your chosen format and, if **Include
   attachments** is on, an `attachments/` subfolder. Same layout as
   [the batch-export ZIP](../spec/zip-bundle-structure.md).
 - **`_INDEX.md`** — table of every conversation with status: `OK` /
-  `Skipped: empty` / `Failed: <reason>`.
+  `Skipped: empty` / `Failed: <error>` / `Not run` (the last appears when
+  you cancel mid-run and some conversations were never reached).
 - **`_INCOMPLETE.md`** — only present if the `/docs` or `/files` listing call
   failed; flags that the `files/` directory may be incomplete.
 

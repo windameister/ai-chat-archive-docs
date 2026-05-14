@@ -65,15 +65,20 @@ Project Export runs in this order:
 1. **Lists knowledge docs** — fetches the project's text knowledge from
    `/projects/<id>/docs`.
 2. **Lists files** — fetches binary uploads from `/projects/<id>/files`.
-3. **Iterates conversations** — for each chat in the project, fetches the
+3. **Writes the files index** — once all knowledge files have been added
+   to the archive (or their cancelled tail recorded), `files/_INDEX.md`
+   is written so it reflects the actual names that landed.
+4. **Iterates conversations** — for each chat in the project, fetches the
    full transcript and (if enabled) any attachments.
-4. **Finalizes** — writes `_INDEX.md` and `files/_INDEX.md` with the actual
-   names that landed in the ZIP.
+5. **Writes the conversation index** — `_INDEX.md` is added with the
+   per-conversation status of each entry.
+6. **Finalizes** — generates and downloads the ZIP.
 
 The popup progress bar and the on-page floating panel both reflect the
-current step. You can cancel mid-run: any conversations not yet processed
-get recorded as skipped in `_INDEX.md`, and any remaining files get logged
-in `files/_SKIPPED.md`.
+current step. You can cancel mid-run: conversations that were never
+reached are marked **`Not run`** in `_INDEX.md`, and any remaining
+knowledge files are logged in `files/_SKIPPED.md` with reason `cancelled
+by user`.
 
 ## Step 5: Open the ZIP
 
@@ -93,7 +98,7 @@ Inside, the layout is:
     <date>_<title>/
       <title>.<ext>     # transcript in your chosen format
       attachments/      # only when 'Include attachments' was on
-  _INDEX.md             # OK / Skipped: empty / Failed: <error>
+  _INDEX.md             # OK / Skipped: empty / Failed: <error> / Not run
   _INCOMPLETE.md        # only when /docs or /files listing failed
 ```
 
