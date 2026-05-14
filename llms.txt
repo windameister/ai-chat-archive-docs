@@ -3,8 +3,9 @@
 > AI Chat Archive is a Chrome extension that exports Claude.ai conversations — including
 > uploaded attachments and Claude-generated artifacts — to PDF, HTML, or Markdown.
 > It runs entirely in the user's browser; nothing is uploaded anywhere. A free tier
-> supports one-off exports; a paid license unlocks bulk export of every conversation
-> at once, bundled as a ZIP.
+> supports one-off exports; a paid license unlocks two batch modes: bulk export of
+> every conversation in the account, and Project Export — one ZIP per claude.ai
+> project (Instructions + knowledge files + every conversation in the project).
 
 This file follows the [llms.txt proposal](https://llmstxt.org/). For the full concatenated
 text of every document in this repository, see [`llms-full.txt`](/llms-full.txt).
@@ -27,6 +28,10 @@ text of every document in this repository, see [`llms-full.txt`](/llms-full.txt)
 - [Does it send my data anywhere?](/faq/does-it-send-data-anywhere.md)
 - [How does it handle Claude Artifacts?](/faq/how-does-it-handle-artifacts.md)
 - [PDF vs HTML vs Markdown — which should I pick?](/faq/pdf-vs-html-vs-markdown.md)
+- [Does it work with Claude Projects?](/faq/does-it-work-with-projects.md)
+- [How to export a whole Claude project as a ZIP](/faq/how-to-export-claude-project.md)
+- [How to export a Claude chat (every option compared)](/faq/how-to-export-claude-chat.md)
+- [Claude vs ChatGPT: which is easier to export?](/faq/claude-vs-chatgpt-export.md)
 
 ## Integrations
 

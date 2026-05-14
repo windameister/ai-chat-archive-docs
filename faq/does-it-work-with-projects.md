@@ -1,90 +1,103 @@
 # Does AI Chat Archive work with Claude Projects?
 
-**Short answer:** Yes, with full fidelity. Project conversations export exactly like
-regular conversations, with an added note about which project they belong to and their
-attached project files referenced.
+**Yes** — and there's a dedicated **Project Export** mode that bundles the
+entire project (instructions, knowledge docs, all conversations, attachments)
+into one ZIP. Open any `claude.ai/project/<id>` page and you'll see the
+project-export button in the popup and a floating button on the page.
 
-Claude Projects are workspaces that bundle a conversation with project-level instructions,
-uploaded knowledge files, and shared context. AI Chat Archive treats project
-conversations as first-class citizens.
+Project Export shipped in v0.3.0 and is gated by the paid license, same as
+batch export.
 
-## What's exported from a Project conversation
+## Two ways to export Project content
 
-- **All turns** (Human / Claude), as with any conversation.
-- **The project name** — recorded in the conversation metadata.
-- **Project knowledge files** — the files you attached to the Project (not to a
-  specific message) are listed as `> 📎 File: {name}` references in the transcript.
-- **Custom project instructions** — captured as a metadata block at the top of the
-  transcript, before the first turn.
-- **Any artifacts or uploaded message-attachments** — handled the same way as in a
-  standalone conversation.
+Pick the one that matches your goal:
 
-## What bulk export does with Projects
+| Goal | Use | Where |
+|---|---|---|
+| "I want everything from **this one project**" | **Project Export** (paid) | On a `claude.ai/project/<id>` page |
+| "I want **every conversation** in my account — projects or not" | **Batch Export** (paid) | On a `claude.ai/chat/<id>` page |
+| "I just want **this one chat**" | Single-chat export (free) | On any conversation page |
 
-When you run **Bulk export** (paid tier), every conversation is exported — whether or
-not it belongs to a Project. The ZIP's folder naming doesn't distinguish Project chats
-from standalone chats; both live at the top level:
+Both ZIPs follow the same per-conversation folder pattern, so anything you
+import from a batch ZIP will import the same way from a project ZIP.
+
+## What Project Export bundles
+
+A single ZIP, named after the project, containing:
+
+- **`README.md`** — overview: project name, ID, creator, dates, counts, and a
+  note on what's not included.
+- **`metadata.json`** — machine-readable mirror of the project metadata.
+- **`instructions.md`** — the project's Instructions (the "prompt template"
+  shown in the claude.ai sidebar), wrapped in a verbatim fenced block.
+- **`files/`** — everything from the project's "Files" panel:
+  - Text knowledge docs as Markdown.
+  - Uploaded binaries (PDF, images, etc.) in their original format.
+  - `_INDEX.md` — table listing every file with its type and date, written
+    after all knowledge files have been added to the archive (and any
+    cancelled tail recorded) so the names in the index match what was
+    actually written.
+  - `_SKIPPED.md` — only present if some files failed to download or you
+    cancelled mid-run.
+- **`conversations/`** — one folder per chat, named `<date>_<title>`. Each
+  folder holds the transcript in your chosen format and, if **Include
+  attachments** is on, an `attachments/` subfolder. Same layout as
+  [the batch-export ZIP](../spec/zip-bundle-structure.md).
+- **`_INDEX.md`** — table of every conversation with status: `OK` /
+  `Skipped: empty` / `Failed: <error>` / `Not run` (the last appears when
+  you cancel mid-run and some conversations were never reached).
+- **`_INCOMPLETE.md`** — only present if the `/docs` or `/files` listing call
+  failed; flags that the `files/` directory may be incomplete.
+
+## Example ZIP layout
 
 ```
-ai-chat-archive-2026-04-24.zip
-├── 2026-03-12_Designing-a-REST-API/          ← standalone
-├── 2026-03-14_Refactoring-the-auth-layer/    ← Project chat
-└── …
+<Project Name>/
+  README.md
+  metadata.json
+  instructions.md
+  files/
+    _INDEX.md
+    design-notes.md
+    architecture.pdf
+    logo.png
+    _SKIPPED.md         # only if some files failed
+  conversations/
+    2026-05-12_API-design-review/
+      API-design-review.md
+      attachments/      # only when 'Include attachments' is on
+    2026-05-13_Auth-refactor/
+      Auth-refactor.md
+  _INDEX.md
+  _INCOMPLETE.md        # only if /docs or /files listing failed
 ```
 
-The transcript itself names the Project in its metadata block, so you can still
-group them in post-processing.
+## What's *not* in the export
 
-## Are Project files bundled?
+- **Memory.** The "Memory" panel that appears on some project pages in the
+  claude.ai web UI is not exposed by any REST endpoint we've been able to
+  reach. The bundled `README.md` documents this explicitly so it's clear
+  it's not a bug. Project Instructions and knowledge docs (which you edit
+  directly) are exported in full.
+- **Sharing / collaborator info** — for privacy, the export does not list
+  who else has access to the project.
+- **Workspace UI state** (sidebar position, pinned messages, etc.) — Claude.ai
+  interface state, not project content.
 
-Yes, when **Include attachments in the ZIP** is checked:
+## Format support
 
-- **Message-level uploads** (files you dropped into a specific turn) → bundled into
-  the per-conversation `attachments/` folder.
-- **Project-level knowledge files** (files attached to the Project itself, shared
-  across all its conversations) → bundled into a shared `_project-files/` folder at
-  the ZIP root, referenced from each conversation that uses them.
+Project Export supports four of the five formats: **Markdown**, **HTML**,
+**JSON**, **TXT**.
 
-The per-conversation transcript retains inline references (`> 📎 File: {name}`) so
-you can trace from any chat back to the project files it used.
-
-## What's *not* exported
-
-- **The live Project workspace UI state** (sidebar position, pinned messages, etc.)
-  — these are Claude.ai interface state, not conversation content.
-- **Shared Projects' collaborator list** — for privacy reasons, we don't export who
-  else has access to a shared Project.
-- **Cross-conversation links** inside a Project — if Claude cited "see our earlier
-  chat about X", the link points at claude.ai and won't resolve offline.
-
-## Example: a Project chat in Markdown
-
-```markdown
-# API design review
-
-> Created: 2026-04-20 10:15 | Updated: 2026-04-20 11:47
-> Project: REST API refactor
-> Project instructions: You are helping design a v3 REST API. Prefer REST conventions
-> over GraphQL. Use explicit error codes.
-
----
-
-## Human (2026-04-20 10:15):
-
-> 📎 File: api-spec-v2.openapi.yaml
-> 📎 File: auth-flow-diagram.png
-
-Can you review the attached spec and suggest improvements for v3?
-
----
-
-## Claude (2026-04-20 10:16):
-
-Here are my notes on the v2 spec...
-```
+**PDF is not supported for Project Export.** PDF generation uses the
+browser's print pipeline, which can only run on one foregrounded chat at a
+time — the same constraint that excludes PDF from batch ZIP mode. If you
+need PDFs of project chats, open each one individually and use single-chat
+export.
 
 ## Related
 
-- [Markdown format spec](../spec/markdown-format.md)
+- [How to export a Claude project (step-by-step)](how-to-export-claude-project.md)
 - [ZIP bundle structure](../spec/zip-bundle-structure.md)
 - [Features](../docs/features.md)
+- [Pricing](../docs/pricing.md)

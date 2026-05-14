@@ -21,6 +21,7 @@ This site is the **public documentation**. For the product itself, see
 - [How does it handle Claude Artifacts?](/faq/how-does-it-handle-artifacts/)
 - [PDF vs HTML vs Markdown — which should I pick?](/faq/pdf-vs-html-vs-markdown/)
 - [Does it work with Claude Projects?](/faq/does-it-work-with-projects/)
+- [How do I export a whole Claude project as a ZIP?](/faq/how-to-export-claude-project/)
 - [How do I export a Claude chat, generally?](/faq/how-to-export-claude-chat/)
 - [Claude vs ChatGPT: which is easier to export?](/faq/claude-vs-chatgpt-export/)
 

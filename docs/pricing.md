@@ -28,6 +28,10 @@ Unlocks everything. Pick the tier that matches how you use Claude:
 ### What every paid plan includes
 
 - **Bulk export** every conversation on your Claude account into a single ZIP.
+- **Project export** — one ZIP per Claude project, bundling its
+  Instructions, knowledge files, and every conversation in it. Open any
+  `claude.ai/project/<uuid>` page to trigger it. See
+  [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments** — uploaded files and Claude-generated `present_files`
   bundle alongside transcripts.
 - **Unlimited PDF exports** — no 3/day cap.
