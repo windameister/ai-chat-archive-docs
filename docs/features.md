@@ -22,6 +22,20 @@ output.
 
 See the [format specs](../spec/) for the exact structure each one produces.
 
+## Three export modes
+
+| Mode | Scope | URL it activates on | Tier |
+|---|---|---|---|
+| **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free (PDF capped 3/day) |
+| **Batch export** | Every conversation in your account, as one ZIP | `claude.ai/chat/<id>` | Paid |
+| **Project export** | One whole project (Instructions, knowledge files, every conversation in it), as one ZIP | `claude.ai/project/<uuid>` | Paid |
+
+Batch and Project Export are mutually exclusive: the popup shows the one
+that fits the current page, and only one paid export can run at a time.
+Project Export supports Markdown / HTML / JSON / TXT (not PDF — same
+browser-print limitation as batch). See the
+[how-to](../faq/how-to-export-claude-project.md) for the step-by-step.
+
 ## What gets captured
 
 Every export includes, by default:
@@ -68,12 +82,16 @@ Free tier is enough for occasional backups and casual users.
 Activates with a license key from <https://aichatarchive.app>. Unlocks:
 
 - **Bulk export** — every conversation on your Claude account in one ZIP.
+- **Project export** — one ZIP per Claude project, including the project's
+  Instructions, knowledge files, and every conversation in it. Triggered
+  from `claude.ai/project/<uuid>` pages. See
+  [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments in the ZIP** — bundle uploaded files and
   Claude-generated `present_files` alongside their transcripts. See the
   [ZIP bundle structure](../spec/zip-bundle-structure.md).
 - **Unlimited PDF exports** — no more 3/day cap.
 - **No branding footer** in exported files.
-- **Filter by date, title, or project** before bulk export (upcoming).
+- **Filter by date or title** before bulk export (upcoming).
 
 See [pricing.md](pricing.md) for tier prices.
 
