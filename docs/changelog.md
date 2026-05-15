@@ -5,6 +5,36 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.3.0 — May 2026 — Export entire claude.ai projects
+
+- **New: Project Export.** On a `claude.ai/project/<uuid>` page, paid
+  users now export the whole project — Instructions, knowledge files,
+  every conversation in the project, every attachment — as one ZIP.
+  Triggered from the popup or from a floating button on the project
+  page; free users get an upsell variant.
+- ZIP layout: `README.md`, `metadata.json`, `instructions.md`,
+  `files/` (text knowledge + binary uploads merged, with their own
+  `_INDEX.md`), `conversations/<date>_<title>/` matching the
+  batch-export per-chat layout, a root `_INDEX.md` listing every
+  conversation with status (`OK` / `Skipped: empty` / `Failed: <err>`
+  / `Not run`), and `_INCOMPLETE.md` only when the `/docs` or
+  `/files` listing call failed. Full spec at
+  [the project-export how-to](../faq/how-to-export-claude-project.md).
+- **Memory is not included** — claude.ai does not expose project
+  memory in any reachable REST endpoint, and the bundled `README.md`
+  documents the omission so it's clear it's not an export bug.
+- Formats: Markdown / HTML / JSON / TXT. PDF excluded (same
+  browser-print constraint as batch).
+- Reciprocal mutex with batch export: only one in-page paid export
+  runs at a time. Applying a license while on a `/project/` page
+  flips the upsell button to working state without a reload.
+- Pre-existing batch-export data-loss path fixed as a drive-by:
+  same-date+title conversations no longer overwrite each other inside
+  the ZIP — disambiguated by a shared key set across both modes.
+- v0.3.1 followup: project-export UI strings localized across all 10
+  shipping locales; Chrome Web Store long descriptions updated to
+  mention project export.
+
 ## v0.2.141 — May 2026 — Claude-style theme is the default
 
 - HTML and PDF exports now default to a warmer cream-and-serif theme
