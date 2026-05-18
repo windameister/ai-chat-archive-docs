@@ -19,16 +19,20 @@
 # Sibling-link bug from /faq/does-it-send-data-anywhere/ → another faq page
 /faq/does-it-send-data-anywhere/how-does-it-handle-artifacts/  /faq/how-does-it-handle-artifacts/  301
 
-# Cross-doc relative-link bugs from /faq/ pages → /docs/* targets
-/faq/docs/features/  /docs/features/  301
-/faq/docs/privacy/   /docs/privacy/   301
-
-# Cross-doc relative-link bugs from /faq/ pages → /spec/* targets
-/faq/spec/zip-bundle-structure/  /spec/zip-bundle-structure/  301
-
-# Cross-doc relative-link bugs from /docs/ pages → /spec/* targets
-/docs/spec/                        /spec/                       301
-/docs/spec/zip-bundle-structure/   /spec/zip-bundle-structure/  301
+# Cross-doc relative-link bugs: a /faq/ or /docs/ page linked to a /docs/ or
+# /spec/ target with a sibling-relative href, so the crawler concatenated it
+# onto the current directory (e.g. /faq/spec/markdown-format/, really
+# /spec/markdown-format/). There are NO real pages under /faq/spec/,
+# /docs/spec/, or /faq/docs/ — every path under them is a bug pointing at a
+# real page one level up. Splat the whole prefix so we catch every spec/doc
+# variant (markdown-format, html-format, console-snippet, the /spec/ index, …)
+# instead of enumerating one at a time and waiting for Google to surface the
+# next miss. An empty splat (/faq/spec/ → /spec/) lands on the /spec/ index,
+# which exists. /docs/features/* stays enumerated below because /docs/features/
+# is itself a real page — a splat there would clobber it.
+/faq/spec/*   /spec/:splat   301
+/docs/spec/*  /spec/:splat   301
+/faq/docs/*   /docs/:splat   301
 
 # Sibling-link bugs from /docs/features/ → other /docs/ siblings
 /docs/features/pricing/         /docs/pricing/          301
