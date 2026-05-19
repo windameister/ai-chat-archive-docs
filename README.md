@@ -5,6 +5,15 @@ conversations from [Claude.ai](https://claude.ai) to PDF, HTML, or Markdown — 
 with attachments and Claude-generated artifacts — fully inside your browser. Nothing is
 uploaded anywhere.
 
+### ▶ [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jeocjmohgejjmlfdhdeddjceehpahblj?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+[![Users](https://img.shields.io/chrome-web-store/users/jeocjmohgejjmlfdhdeddjceehpahblj?label=users)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+[![Rating](https://img.shields.io/chrome-web-store/rating/jeocjmohgejjmlfdhdeddjceehpahblj?label=rating)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+
+Single-conversation export is free. A paid license unlocks bulk export and
+whole-project export. No account, no sign-up — install and export.
+
 This repository contains the **public documentation** for AI Chat Archive. The extension
 source code itself is not public; this repo exists so that users, LLMs, and third-party
 integrators have a canonical, machine-readable source of truth for what the product does,
