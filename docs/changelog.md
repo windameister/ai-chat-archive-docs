@@ -5,6 +5,35 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.3.8 — July 2026 — Export Cowork tasks
+
+- **New: Cowork export.** Claude's agentic **Cowork** tasks (the
+  `claude.ai/cowork/<id>` surface, distinct from chats and projects) now
+  export like any conversation. The full transcript renders in every
+  format — Markdown / HTML / PDF / JSON / TXT — with the user prompts,
+  Claude's replies, and a readable trace of the tools the task ran.
+- **Output files bundled (paid).** The files a task produces (its
+  "Outputs" panel — PDFs, spreadsheets, Word docs, images, text) are
+  downloaded with their real bytes and bundled into the export ZIP under
+  `outputs/`.
+- The floating export button appears on Cowork pages and slides clear of
+  Claude's right-hand panel when it's open, snapping back when it closes.
+- Long tasks export in full (no truncation), and non-Latin content and
+  filenames (e.g. Chinese) are preserved through to the ZIP.
+
+## v0.3.7 — July 2026 — Fixes for Claude's July web update
+
+- **Fixed: PDF export failed with a 403.** A claude.ai web update stopped
+  authenticating the extension-origin request the PDF page relied on. The
+  export now fetches the conversation first-party (from the claude.ai
+  page) and hands it to the print page, so PDF export works again — on
+  every browser.
+- **Fixed: the project export button disappeared.** Claude moved projects
+  under a `/cowork/project/<id>` URL; the extension now recognizes the new
+  path (and the legacy `/project/<id>`), so the project floating button
+  and the popup action are back.
+- No settings or license changes — existing keys keep working.
+
 ## v0.3.0 — May 2026 — Export entire claude.ai projects
 
 - **New: Project Export.** On a `claude.ai/project/<uuid>` page, paid
