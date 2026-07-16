@@ -58,6 +58,7 @@ One file per question. Every file is a standalone, directly linkable answer.
 - [Claude export: PDF vs HTML vs Markdown — which should I use?](faq/pdf-vs-html-vs-markdown.md)
 - [Does it work with Claude Projects?](faq/does-it-work-with-projects.md)
 - [How to export a whole Claude project as a ZIP](faq/how-to-export-claude-project.md)
+- [How to export a Claude Cowork task (agent runs + output files)](faq/how-to-export-claude-cowork-tasks.md)
 - …see the full list in [faq/](faq/).
 
 ### Output format spec — `spec/`
@@ -2133,4 +2134,25 @@ These files are plain committed text, so you can:
 - Fetch any file via its raw GitHub URL for live-parsing tests in CI.
 
 License for these sample files follows the repo-wide [CC BY 4.0](../LICENSE).
+
+
+==============================================================
+FILE: faq/how-to-export-claude-cowork-tasks.md
+==============================================================
+
+# How to export a Claude Cowork task
+
+Claude's **Cowork** surface (the "Cowork" toggle next to "Chat", grouped under **Chats and tasks** in the sidebar) runs agentic, multi-step tasks — Claude works in a cloud sandbox, runs tools, searches the web, and produces files. A Cowork task lives at a URL like `https://claude.ai/cowork/cse_<id>`.
+
+It is a **different kind of session** from an ordinary chat or a Project, and Claude.ai gives you no way to export one. AI Chat Archive (**v0.3.8+**) adds first-class Cowork export: the full transcript in every format, plus the files the task produced.
+
+- A **chat** (`/chat/<id>`) is a plain conversation.
+- A **project** (`/cowork/project/<id>`) groups chats with shared instructions and knowledge files.
+- A **Cowork task** (`/cowork/cse_<id>`) is an agent run: Claude executes a goal step by step using tools (Bash, file edits, web search) and delivers output files to an **Outputs** panel. Under the hood it is a Claude Code session, which is why the standard export options don't reach it.
+
+**How to export:** open the task (`https://claude.ai/cowork/cse_<id>`), then use the floating **Export** button (it moves aside so it never covers Claude's right-hand Progress / Outputs / Context panel) or the toolbar popup, and pick a format (Markdown / HTML / PDF / JSON / TXT).
+
+**What you get:** your prompts and Claude's replies in order; a readable trace of the tools the task ran (commands, file writes, web searches) and their results, with internal scaffolding filtered out; and — on a paid plan — every output file the task delivered (PDFs, spreadsheets, Word docs, images, text) bundled into the ZIP under `outputs/`. Long tasks export in full (the extension pages through the entire event history); non-Latin content and filenames (e.g. Chinese) are preserved end to end. The transcript is free in every format; bundling the output files is a paid feature, gated by the same license as Project / Batch export.
+
+**Not covered yet:** batch export of Cowork tasks (export is one task at a time), and the live sandbox environment itself (only the transcript and delivered output files are exported).
 
