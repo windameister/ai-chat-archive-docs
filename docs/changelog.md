@@ -5,6 +5,34 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.4.1 — July 2026 — ChatGPT works on install
+
+- **ChatGPT export works right away.** The one-time in-popup "Enable on
+  ChatGPT" step is gone — open a conversation on `chatgpt.com` and the
+  Export button is there. (Updating from an earlier version: your browser
+  asks once to allow `chatgpt.com`; accept it and you're set.)
+- **Fewer permissions.** Dropped the `scripting` and `activeTab`
+  permissions — the extension now requests only local storage plus access
+  to the sites it exports (`claude.ai`, `chatgpt.com`).
+- No changes to Claude export, Projects, Cowork, batch, attachments, or
+  unlimited free PDF.
+
+## v0.4.0 — July 2026 — Export ChatGPT conversations
+
+- **New: ChatGPT export.** AI Chat Archive now exports ChatGPT
+  conversations too, from the same extension — to Markdown, HTML, PDF,
+  JSON, or TXT, with **unlimited free PDF** (no daily cap).
+- **Your images come through.** Pictures ChatGPT generated *and* images
+  you uploaded embed in the HTML and PDF, so the file looks like the chat.
+- **Projects and custom GPTs.** The Export button also appears on
+  conversations inside a ChatGPT Project and on chats with a custom GPT.
+- **Attachments and batch (paid).** Bundle the original uploaded files
+  into the ZIP, and batch-export your entire ChatGPT history as one ZIP.
+- Clean transcript: code blocks, tables, and CJK text render correctly;
+  browsing/tool scaffolding and citation markers are stripped.
+- 100% local — reads `chatgpt.com` over your existing session. No account,
+  no upload, no telemetry.
+
 ## v0.3.8 — July 2026 — Export Cowork tasks
 
 - **New: Cowork export.** Claude's agentic **Cowork** tasks (the
