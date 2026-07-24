@@ -50,11 +50,13 @@ A handful of browser extensions and scripts provide Claude conversation export.
 
 ### AI Chat Archive (this tool)
 
-- **What it does**: Export any Claude conversation to PDF, HTML, Markdown, JSON,
-  or plain text. Bulk export the entire account to a ZIP with attachments.
+- **What it does**: Export any Claude **or ChatGPT** conversation to PDF, HTML,
+  Markdown, JSON, or plain text. Bulk-export the entire account to a ZIP with attachments.
 - **Where it runs**: Entirely in your browser (local). Nothing uploaded anywhere.
-- **Price**: Free for single exports (with 3 PDF/day cap); paid license starts at
-  **$19 lifetime** (launch promo, normally $39) for bulk / attachments / unlimited PDFs.
+- **Price**: Free for single-conversation export in all five formats, with
+  **unlimited free PDF** (no daily cap) and images embedded in the HTML/PDF. A
+  **$39 lifetime** license adds batch export of the whole account, attachment
+  bundling (original files in a ZIP), and Claude project export.
 - **Best for**: Users who want a polished, one-click workflow with full fidelity.
 
 ### Copy-paste + a markdown cleaner
@@ -79,26 +81,31 @@ If you have 50+ conversations and want them **organized, readable, and with
 attachments**:
 
 - **ChatGPT → native export → pandoc**: possible but painful. The monolithic HTML
-  file has to be split, attachments don't ride along, and pandoc conversion loses
-  artifact fidelity.
+  file has to be split, attachments don't ride along, and conversion loses fidelity.
+- **ChatGPT → AI Chat Archive**: one click per conversation, or one ZIP for the whole
+  account (paid), with images embedded and attachments bundled.
 - **Claude → AI Chat Archive**: one click. Every conversation gets its own folder,
   attachments bundled, artifacts rendered correctly.
 
-For Claude specifically, you currently **have** to use a third-party tool. That's
-why we built AI Chat Archive.
+Claude still has no native export at all, so a third-party tool is the only option
+there — which is why we built AI Chat Archive. For ChatGPT you have a choice: the
+native bulk export for a whole-account dump, or AI Chat Archive for clean
+per-conversation files.
 
 ## Can I export ChatGPT conversations with AI Chat Archive?
 
-Not today. AI Chat Archive is Claude-specific — its export logic is tuned to
-Claude's API response shape, its artifact types, and its UI conventions. Building
-a ChatGPT equivalent is on our roadmap but is a separate product, not a feature
-bolted on.
+Yes — as of 2026, AI Chat Archive exports ChatGPT too, from the same extension.
+Open a conversation on `chatgpt.com`, grant access once, and export it to PDF,
+Markdown, HTML, JSON, or TXT — with **unlimited free PDF**, images embedded, and
+support for ChatGPT Projects and custom GPTs. Batch export and attachment bundling
+are part of the paid license. Step-by-step:
+[How to export a ChatGPT conversation](how-to-export-chatgpt-chats.md).
 
-If you need both, use:
+So one tool now covers both assistants:
 
 - **Claude** — AI Chat Archive.
-- **ChatGPT** — native export for bulk, or a dedicated ChatGPT extension for
-  per-conversation export.
+- **ChatGPT** — AI Chat Archive (or ChatGPT's native bulk export if you only want
+  the whole account in one email-delivered ZIP).
 
 ## Related
 

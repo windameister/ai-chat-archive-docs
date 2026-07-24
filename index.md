@@ -24,6 +24,7 @@ This site is the **public documentation**. For the product itself, see
 - [How do I export a whole Claude project as a ZIP?](/faq/how-to-export-claude-project/)
 - [How do I export a Claude Cowork task?](/faq/how-to-export-claude-cowork-tasks/)
 - [How do I export a Claude chat, generally?](/faq/how-to-export-claude-chat/)
+- [How do I export a ChatGPT conversation?](/faq/how-to-export-chatgpt-chats/)
 - [Claude vs ChatGPT: which is easier to export?](/faq/claude-vs-chatgpt-export/)
 
 ## For developers & integrators
