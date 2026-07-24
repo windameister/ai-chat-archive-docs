@@ -121,8 +121,9 @@ Scope discipline keeps the product sharp. The following are explicitly out of sc
 - ❌ Syncing exports to cloud storage. Your OS already does this better.
 - ❌ Scheduled / automatic background exports without your click. This would require
   standing permissions we don't want.
-- ❌ Exporting conversations from other platforms (ChatGPT, Gemini, Copilot).
-  Maybe in separate products — not this one.
+- ❌ Exporting Gemini or Copilot conversations. Maybe later — not today.
+  (ChatGPT **is** supported now — see
+  [How to export a ChatGPT conversation](../faq/how-to-export-chatgpt-chats.md).)
 
 ## Related
 

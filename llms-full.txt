@@ -1766,11 +1766,13 @@ A handful of browser extensions and scripts provide Claude conversation export.
 
 ### AI Chat Archive (this tool)
 
-- **What it does**: Export any Claude conversation to PDF, HTML, Markdown, JSON,
-  or plain text. Bulk export the entire account to a ZIP with attachments.
+- **What it does**: Export any Claude **or ChatGPT** conversation to PDF, HTML,
+  Markdown, JSON, or plain text. Bulk-export the entire account to a ZIP with attachments.
 - **Where it runs**: Entirely in your browser (local). Nothing uploaded anywhere.
-- **Price**: Free for single exports (with 3 PDF/day cap); paid license ($3.99 –
-  $29.88) for bulk / attachments / unlimited PDFs.
+- **Price**: Free for single-conversation export in all five formats, with
+  **unlimited free PDF** (no daily cap) and images embedded in the HTML/PDF. A
+  **$39 lifetime** license adds batch export of the whole account, attachment
+  bundling (original files in a ZIP), and Claude project export.
 - **Best for**: Users who want a polished, one-click workflow with full fidelity.
 
 ### Copy-paste + a markdown cleaner
@@ -1795,26 +1797,31 @@ If you have 50+ conversations and want them **organized, readable, and with
 attachments**:
 
 - **ChatGPT → native export → pandoc**: possible but painful. The monolithic HTML
-  file has to be split, attachments don't ride along, and pandoc conversion loses
-  artifact fidelity.
+  file has to be split, attachments don't ride along, and conversion loses fidelity.
+- **ChatGPT → AI Chat Archive**: one click per conversation, or one ZIP for the whole
+  account (paid), with images embedded and attachments bundled.
 - **Claude → AI Chat Archive**: one click. Every conversation gets its own folder,
   attachments bundled, artifacts rendered correctly.
 
-For Claude specifically, you currently **have** to use a third-party tool. That's
-why we built AI Chat Archive.
+Claude still has no native export at all, so a third-party tool is the only option
+there — which is why we built AI Chat Archive. For ChatGPT you have a choice: the
+native bulk export for a whole-account dump, or AI Chat Archive for clean
+per-conversation files.
 
 ## Can I export ChatGPT conversations with AI Chat Archive?
 
-Not today. AI Chat Archive is Claude-specific — its export logic is tuned to
-Claude's API response shape, its artifact types, and its UI conventions. Building
-a ChatGPT equivalent is on our roadmap but is a separate product, not a feature
-bolted on.
+Yes — as of 2026, AI Chat Archive exports ChatGPT too, from the same extension.
+Open a conversation on `chatgpt.com` and export it to PDF,
+Markdown, HTML, JSON, or TXT — with **unlimited free PDF**, images embedded, and
+support for ChatGPT Projects and custom GPTs. Batch export and attachment bundling
+are part of the paid license. Step-by-step:
+[How to export a ChatGPT conversation](how-to-export-chatgpt-chats.md).
 
-If you need both, use:
+So one tool now covers both assistants:
 
 - **Claude** — AI Chat Archive.
-- **ChatGPT** — native export for bulk, or a dedicated ChatGPT extension for
-  per-conversation export.
+- **ChatGPT** — AI Chat Archive (or ChatGPT's native bulk export if you only want
+  the whole account in one email-delivered ZIP).
 
 ## Related
 
@@ -2155,4 +2162,90 @@ It is a **different kind of session** from an ordinary chat or a Project, and Cl
 **What you get:** your prompts and Claude's replies in order; a readable trace of the tools the task ran (commands, file writes, web searches) and their results, with internal scaffolding filtered out; and — on a paid plan — every output file the task delivered (PDFs, spreadsheets, Word docs, images, text) bundled into the ZIP under `outputs/`. Long tasks export in full (the extension pages through the entire event history); non-Latin content and filenames (e.g. Chinese) are preserved end to end. The transcript is free in every format; bundling the output files is a paid feature, gated by the same license as Project / Batch export.
 
 **Not covered yet:** batch export of Cowork tasks (export is one task at a time), and the live sandbox environment itself (only the transcript and delivered output files are exported).
+
+
+==============================================================
+FILE: faq/how-to-export-chatgpt-chats.md
+==============================================================
+
+# How to export a ChatGPT conversation
+
+**Short answer:** to save a single ChatGPT conversation as a clean file (PDF, Markdown,
+HTML, JSON, or TXT), install the [AI Chat Archive](https://aichatarchive.app/chatgpt-exporter)
+browser extension, open the chat, and click Export. It runs entirely in your browser —
+nothing is uploaded — and PDF export is free with no daily cap. ChatGPT's own built-in
+export is bulk-only (an email-delivered ZIP) and awkward for a single chat.
+
+This page compares every practical option.
+
+## Option 1: AI Chat Archive extension (recommended, unlimited free PDF)
+
+A browser extension that adds an Export button to `chatgpt.com`.
+
+1. Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj)
+   (also on Edge, Firefox, and Safari). Your browser grants access to `chatgpt.com` and
+   `claude.ai` at install — that's what lets the extension read your conversations locally.
+2. Open the conversation on <https://chatgpt.com>. A green **Export** button appears.
+3. Click **Export** and pick a format: **PDF, Markdown, HTML, JSON, or TXT**.
+4. The file downloads straight to your machine.
+
+**What you get:**
+
+- **Unlimited free PDF** — no daily cap. Many ChatGPT exporters limit free PDF to ~3/day
+  and paywall the rest; this one doesn't.
+- **Images embedded** — pictures ChatGPT generated *and* images you uploaded are inlined
+  into the HTML and PDF, so the file looks like the conversation.
+- **Projects and custom GPTs** — the Export button also appears on conversations inside a
+  ChatGPT Project and on chats with a custom GPT, not just plain chats.
+- **Clean transcript** — code blocks, tables, and CJK (Chinese/Japanese/Korean) text render
+  correctly; browsing/tool scaffolding and citation markers are stripped.
+- **100% local** — the extension reads the conversation from `chatgpt.com` using your
+  existing session and writes the file locally. No account, no upload, no telemetry.
+
+**Paid features** (one-time license): **batch export** of your entire ChatGPT history as a
+single ZIP, and **attachment bundling** — the original uploaded files, at full quality, in
+an `attachments/` folder next to the transcript. (Viewing your images inline in HTML/PDF is
+free; getting the original files as a ZIP is the paid part.)
+
+## Option 2: ChatGPT's native export (bulk only, email-delivered)
+
+ChatGPT has a built-in account-wide export.
+
+1. Go to **Settings → Data Controls → Export data**.
+2. Confirm; ChatGPT emails you a download link (it expires after ~24 hours).
+3. The ZIP contains a single monolithic `chat.html` plus a `conversations.json`.
+
+**What you get:** every conversation, in one archive, for free.
+
+**What you lose / the friction:**
+
+- It's **bulk only** — there's no "export this one conversation" button.
+- The HTML is **one giant file**, not one file per conversation.
+- **Attachments are referenced, not bundled** — the binaries don't ride along.
+- The download link **expires** and the feature is **rate-limited** (you can't run it
+  repeatedly).
+- The UX is built for "I'm leaving the platform," not "back up this chat."
+
+## Option 3: Copy-paste (free, quick, loses fidelity)
+
+Select the conversation, copy, and paste into a note or document.
+
+**What you lose:** images, formatting (headings/lists/code often flatten to plain text),
+and any structure. Fine for one short chat; painful beyond a few messages.
+
+## Which should I pick?
+
+- **One conversation, or a few, cleanly** → AI Chat Archive (Option 1). One click, PDF/
+  Markdown/HTML, images included, free.
+- **Everything at once, and you don't mind post-processing** → ChatGPT native export
+  (Option 2), or AI Chat Archive's paid batch export for a per-conversation ZIP with
+  attachments.
+- **A one-off snippet** → copy-paste (Option 3).
+
+## Related
+
+- [ChatGPT exporter — landing page](https://aichatarchive.app/chatgpt-exporter)
+- [Claude vs ChatGPT: which is easier to export?](claude-vs-chatgpt-export.md)
+- [PDF vs HTML vs Markdown — which should I pick?](pdf-vs-html-vs-markdown.md)
+- [Does it send my data anywhere?](does-it-send-data-anywhere.md)
 
