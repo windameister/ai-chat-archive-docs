@@ -95,7 +95,7 @@ per-conversation files.
 ## Can I export ChatGPT conversations with AI Chat Archive?
 
 Yes — as of 2026, AI Chat Archive exports ChatGPT too, from the same extension.
-Open a conversation on `chatgpt.com`, grant access once, and export it to PDF,
+Open a conversation on `chatgpt.com` and export it to PDF,
 Markdown, HTML, JSON, or TXT — with **unlimited free PDF**, images embedded, and
 support for ChatGPT Projects and custom GPTs. Batch export and attachment bundling
 are part of the paid license. Step-by-step:

@@ -13,13 +13,11 @@ This page compares every practical option.
 A browser extension that adds an Export button to `chatgpt.com`.
 
 1. Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj)
-   (also on Edge, Firefox, and Safari).
-2. Open the conversation on <https://chatgpt.com>.
-3. The first time, click **Enable on ChatGPT** in the extension popup to grant access to
-   `chatgpt.com` (a one-time, opt-in permission). The page reloads and a green **Export**
-   button appears.
-4. Click **Export** and pick a format: **PDF, Markdown, HTML, JSON, or TXT**.
-5. The file downloads straight to your machine.
+   (also on Edge, Firefox, and Safari). Your browser grants access to `chatgpt.com` and
+   `claude.ai` at install — that's what lets the extension read your conversations locally.
+2. Open the conversation on <https://chatgpt.com>. A green **Export** button appears.
+3. Click **Export** and pick a format: **PDF, Markdown, HTML, JSON, or TXT**.
+4. The file downloads straight to your machine.
 
 **What you get:**
 
