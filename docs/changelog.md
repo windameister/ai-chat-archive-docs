@@ -5,6 +5,65 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.4.8 — August 2026 — Your uploads, finally in your exports
+
+- **Fixed: your uploaded files were missing from batch ZIPs.** With
+  "Include attachments in the ZIP" enabled, the archive bundled pasted-text
+  attachments but silently skipped the images and PDFs you uploaded to the
+  chat. They're now downloaded as the **original files** — byte-identical,
+  real filenames — into each conversation's `attachments/` folder.
+  (Reported by a Pro user — thank you.)
+- **Uploaded images now show in PDF and HTML exports** (free). A
+  single-conversation export renders the pictures you uploaded as real
+  inline images instead of a `📎 filename` line. Per-image 5 MB cap.
+- **Nothing goes missing silently.** Any referenced file the export can't
+  fetch is listed in `_SKIPPED.md` with the reason.
+- More resilient file downloads: each file tries several routes, so
+  attachments keep working even after a chat's code sandbox has expired.
+- Versions 0.4.6 and 0.4.7 were internal pre-release tags folded into
+  this update.
+
+## v0.4.5 — July 2026 — Batch export from your chats list
+
+- **"Export all conversations" now works from the chat-list pages**
+  (`claude.ai/recents`). Previously batch export required opening some
+  conversation first; now it's available right where you see all your
+  chats.
+- Single-conversation export stays disabled on list pages — there's no
+  single conversation in view there.
+
+## v0.4.4 — July 2026 — Cleaner PDF/HTML metadata (lite by default)
+
+- **Lite header by default** — every export (Markdown / HTML / PDF / TXT)
+  keeps just the useful basics: **model + created/updated dates**. The
+  extra traceability fields (provider label, export time, source URL, YAML
+  front matter) are now opt-in via **Settings → "Include full metadata"**.
+- **Fixed the "Source" field in PDFs** — it used to render as a bare link
+  whose URL was invisible in print. With full metadata on, it now shows
+  the actual URL as text.
+- JSON exports keep their structured metadata fields as before.
+
+## v0.4.3 — July 2026 — Project export on multi-organization accounts
+
+- **Fixed: project export failed with a 404** for accounts that belong to
+  more than one Claude organization (for example, a personal account plus
+  a Team or Enterprise workspace). The extension now locates the
+  organization that actually **owns** the project instead of assuming the
+  first one; single-organization accounts are unaffected.
+- If a project still can't be found, the error now names the project and
+  every organization tried, with its status — screenshot it and send it
+  to support.
+
+## v0.4.2 — July 2026 — Rich export metadata (YAML front matter)
+
+- **Markdown exports can start with a YAML front matter block** (`title`,
+  `chatbot`, `model`, `source_url`, `created` / `updated` / `archived`,
+  `created_by`) — ideal for Obsidian, Dataview, and downstream tooling.
+  Fields that aren't available are omitted.
+- The same metadata is surfaced in the JSON, HTML, and TXT exports.
+- **New setting** — "YAML front matter (Markdown)" in the popup's
+  Settings, on by default.
+
 ## v0.4.1 — July 2026 — ChatGPT works on install
 
 - **ChatGPT export works right away.** The one-time in-popup "Enable on
