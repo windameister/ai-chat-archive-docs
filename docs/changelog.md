@@ -5,6 +5,18 @@ the [extension's Chrome Web Store listing](https://chromewebstore.google.com/det
 
 Versions follow Chrome's required numeric format (no semver suffixes).
 
+## v0.4.9 — August 2026 — Print-safe image sizing
+
+- **Tall photos no longer break PDF pagination.** An uncapped phone photo
+  rendered at natural size could span three printed pages — splitting
+  mid-image and stretching the message bubble into a full blank page.
+  Embedded images are now height-capped (about two-thirds of a printed
+  page, aspect ratio preserved) and always land whole on one page,
+  caption included.
+- Applies to Claude and ChatGPT uploads, generated images, and Cowork
+  inline images alike. Images already smaller than the cap render exactly
+  as before.
+
 ## v0.4.8 — August 2026 — Your uploads, finally in your exports
 
 - **Fixed: your uploaded files were missing from batch ZIPs.** With
