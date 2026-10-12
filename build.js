@@ -60,8 +60,9 @@ const wrap = (title, body, currentPath, schema, srcPath) => {
   const crumb = currentPath === '/' ? '' :
     `<nav class="crumbs"><a href="/">← AI Chat Archive Docs</a></nav>`;
 
-  // schema.org JSON-LD block — improves how the page appears in Google's
-  // search results (rich snippets for FAQ, article markup for docs).
+  // schema.org JSON-LD block — helps search engines and AI crawlers parse the
+  // page (FAQ markup for /faq/*, article markup for docs). Google stopped
+  // showing FAQ rich results in May 2026 but still reads the markup.
   const schemaBlock = schema
     ? `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
     : '';
@@ -247,7 +248,7 @@ function urlPathFor(srcPath) {
 
 // Extract a "short answer" — the first paragraph after the H1 — from an FAQ
 // markdown file, with markdown formatting flattened to plain prose. Used as
-// the `acceptedAnswer.text` in the QAPage JSON-LD.
+// the `acceptedAnswer.text` in the FAQPage JSON-LD.
 function extractShortAnswer(md) {
   const lines = md.split('\n');
   let foundH1 = false;
@@ -258,8 +259,13 @@ function extractShortAnswer(md) {
       continue;
     }
     if (line.trim() === '' && para.length === 0) continue;
-    if (line.trim() === '') break;
-    para.push(line);
+    if (line.trim() === '') {
+      // A lone lead-in label ("**Quick answer:**") introduces the real
+      // answer in the next block (usually a bullet list) — read through it.
+      if (para.length === 1 && /:\**$/.test(para[0].trim())) continue;
+      break;
+    }
+    para.push(line.replace(/^\s*[-*+]\s+/, ''));
   }
   return para.join(' ')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
@@ -273,8 +279,13 @@ function extractShortAnswer(md) {
 // Build the schema.org JSON-LD object for a given page. Returns null for
 // pages we don't want to mark up (e.g. examples). Conventions:
 //   /                  -> WebSite + publisher Organization
-//   /faq/*             -> QAPage with mainEntity Question + acceptedAnswer
+//   /faq/*             -> FAQPage with one Question + acceptedAnswer
 //   /docs/* or /spec/* -> TechArticle
+//
+// Not QAPage for /faq/*: Google reserves QAPage for pages where users can
+// submit their own answers (forums), and explicitly lists site-written FAQs
+// and how-to guides as invalid uses — Search Console flags them in the Q&A
+// report (missing author/datePublished/upvoteCount).
 function buildSchema(srcPath, title, md, urlPath) {
   const fullUrl = BASE_URL + urlPath;
   const publisher = {
@@ -297,19 +308,16 @@ function buildSchema(srcPath, title, md, urlPath) {
     const answer = extractShortAnswer(md);
     return {
       "@context": "https://schema.org",
-      "@type": "QAPage",
+      "@type": "FAQPage",
       url: fullUrl,
-      mainEntity: {
+      mainEntity: [{
         "@type": "Question",
         name: title,
-        text: title,
-        answerCount: 1,
         acceptedAnswer: {
           "@type": "Answer",
           text: answer,
-          url: fullUrl,
         },
-      },
+      }],
     };
   }
 
