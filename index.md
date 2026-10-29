@@ -1,8 +1,10 @@
 # AI Chat Archive — Documentation
 
-**[AI Chat Archive](https://aichatarchive.app)** is a Chrome extension that exports
-Claude.ai conversations to PDF, HTML, or Markdown — complete with attachments and
-Claude-generated artifacts — entirely inside your browser. Nothing is uploaded anywhere.
+**[AI Chat Archive](https://aichatarchive.app)** exports Claude.ai and ChatGPT
+conversations to **PDF, Markdown, HTML, JSON or TXT**, with **100% local processing**.
+Single-conversation PDF export is free and unlimited, with no daily cap. A paid
+license unlocks whole-project ZIP exports, batch export and attachment bundling.
+Your conversations are never uploaded to AI Chat Archive servers.
 
 This site is the **public documentation**. For the product itself, see
 [aichatarchive.app](https://aichatarchive.app) or

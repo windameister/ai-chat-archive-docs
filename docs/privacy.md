@@ -70,7 +70,6 @@ The extension stores only the following in Chrome's `chrome.storage.local`:
 - Your format preferences (PDF / HTML / Markdown).
 - Your timestamp style.
 - Your license key, if activated.
-- Daily PDF export counter (free tier: 3 PDFs/day).
 
 Never stored: conversation content, attachment bytes, or any identifier tied to your
 Claude account.

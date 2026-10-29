@@ -16,10 +16,20 @@ FILE: README.md
 
 # AI Chat Archive — Documentation
 
-**[AI Chat Archive](https://aichatarchive.app)** is a Chrome extension that exports
-conversations from [Claude.ai](https://claude.ai) to PDF, HTML, or Markdown — complete
-with attachments and Claude-generated artifacts — fully inside your browser. Nothing is
-uploaded anywhere.
+**[AI Chat Archive](https://aichatarchive.app)** exports [Claude.ai](https://claude.ai)
+and ChatGPT conversations to **PDF, Markdown, HTML, JSON or TXT**, with **100% local
+processing**. Single-conversation PDF export is free and unlimited, with no daily
+cap. A paid license unlocks whole-project ZIP exports, batch export and attachment
+bundling. Your conversations are never uploaded to AI Chat Archive servers.
+
+### ▶ [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jeocjmohgejjmlfdhdeddjceehpahblj?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+[![Users](https://img.shields.io/chrome-web-store/users/jeocjmohgejjmlfdhdeddjceehpahblj?label=users)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+[![Rating](https://img.shields.io/chrome-web-store/rating/jeocjmohgejjmlfdhdeddjceehpahblj?label=rating)](https://chromewebstore.google.com/detail/jeocjmohgejjmlfdhdeddjceehpahblj)
+
+Single-conversation export is free. A paid license unlocks bulk export and
+whole-project export. No account, no sign-up — install and export.
 
 This repository contains the **public documentation** for AI Chat Archive. The extension
 source code itself is not public; this repo exists so that users, LLMs, and third-party
@@ -57,8 +67,6 @@ One file per question. Every file is a standalone, directly linkable answer.
 - [How does it handle Claude Artifacts?](faq/how-does-it-handle-artifacts.md)
 - [Claude export: PDF vs HTML vs Markdown — which should I use?](faq/pdf-vs-html-vs-markdown.md)
 - [Does it work with Claude Projects?](faq/does-it-work-with-projects.md)
-- [How to export a whole Claude project as a ZIP](faq/how-to-export-claude-project.md)
-- [How to export a Claude Cowork task (agent runs + output files)](faq/how-to-export-claude-cowork-tasks.md)
 - …see the full list in [faq/](faq/).
 
 ### Output format spec — `spec/`
@@ -100,6 +108,8 @@ republish it with attribution. See [LICENSE](LICENSE) for the full text.
 The AI Chat Archive extension itself is a commercial product and is **not** open source.
 Its code is not contained in this repository.
 
+For LLM-friendly access, see [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt). For deployment, see [`DEPLOY.md`](DEPLOY.md).
+
 
 ==============================================================
 FILE: docs/getting-started.md
@@ -137,7 +147,7 @@ A small popup appears. You'll see:
 
 | Format | Best for | Notes |
 |---|---|---|
-| **PDF** | Sharing, printing, archival | Rendered through Chrome's print engine. Attachments cannot be bundled. Free tier: 3 PDFs/day. |
+| **PDF** | Sharing, printing, archival | Rendered through Chrome's print engine. Attachments cannot be bundled. Single-conversation PDF export is free and unlimited, with no daily cap. |
 | **HTML** | Browsing offline, web archival | Self-contained single file with embedded CSS. Looks like claude.ai. |
 | **Markdown** | Notes, Obsidian, Notion, grep | Pure text. Attachments referenced but not embedded. See [spec](../spec/markdown-format.md). |
 
@@ -195,6 +205,20 @@ output.
 
 See the [format specs](../spec/) for the exact structure each one produces.
 
+## Three export modes
+
+| Mode | Scope | URL it activates on | Tier |
+|---|---|---|---|
+| **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free, including unlimited PDF exports with no daily cap |
+| **Batch export** | Every conversation in your account, as one ZIP | `claude.ai/chat/<id>` | Paid |
+| **Project export** | One whole project (Instructions, knowledge files, every conversation in it), as one ZIP | `claude.ai/project/<uuid>` | Paid |
+
+Batch and Project Export are mutually exclusive: the popup shows the one
+that fits the current page, and only one paid export can run at a time.
+Project Export supports Markdown / HTML / JSON / TXT (not PDF — same
+browser-print limitation as batch). See the
+[how-to](../faq/how-to-export-claude-project.md) for the step-by-step.
+
 ## What gets captured
 
 Every export includes, by default:
@@ -231,7 +255,7 @@ Available to every user, no license required:
 - Export the **currently open** conversation.
 - All 5 formats (PDF, HTML, Markdown, JSON, TXT).
 - Advanced settings (timestamp format, thinking inclusion, tool-call inclusion).
-- **PDF daily quota: 3 per day.** HTML / Markdown / JSON / TXT have no quota.
+- **Single-conversation PDF export is free and unlimited, with no daily cap.** HTML / Markdown / JSON / TXT exports are also unlimited.
 - A single attribution line in the exported file footer.
 
 Free tier is enough for occasional backups and casual users.
@@ -241,12 +265,15 @@ Free tier is enough for occasional backups and casual users.
 Activates with a license key from <https://aichatarchive.app>. Unlocks:
 
 - **Bulk export** — every conversation on your Claude account in one ZIP.
+- **Project export** — one ZIP per Claude project, including the project's
+  Instructions, knowledge files, and every conversation in it. Triggered
+  from `claude.ai/project/<uuid>` pages. See
+  [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments in the ZIP** — bundle uploaded files and
   Claude-generated `present_files` alongside their transcripts. See the
   [ZIP bundle structure](../spec/zip-bundle-structure.md).
-- **Unlimited PDF exports** — no more 3/day cap.
 - **No branding footer** in exported files.
-- **Filter by date, title, or project** before bulk export (upcoming).
+- **Filter by date or title** before bulk export (upcoming).
 
 See [pricing.md](pricing.md) for tier prices.
 
@@ -276,8 +303,9 @@ Scope discipline keeps the product sharp. The following are explicitly out of sc
 - ❌ Syncing exports to cloud storage. Your OS already does this better.
 - ❌ Scheduled / automatic background exports without your click. This would require
   standing permissions we don't want.
-- ❌ Exporting conversations from other platforms (ChatGPT, Gemini, Copilot).
-  Maybe in separate products — not this one.
+- ❌ Exporting Gemini or Copilot conversations. Maybe later — not today.
+  (ChatGPT **is** supported now — see
+  [How to export a ChatGPT conversation](../faq/how-to-export-chatgpt-chats.md).)
 
 ## Related
 
@@ -363,7 +391,6 @@ The extension stores only the following in Chrome's `chrome.storage.local`:
 - Your format preferences (PDF / HTML / Markdown).
 - Your timestamp style.
 - Your license key, if activated.
-- Daily PDF export counter (free tier: 3 PDFs/day).
 
 Never stored: conversation content, attachment bytes, or any identifier tied to your
 Claude account.
@@ -411,7 +438,7 @@ No license required. Install from the Chrome Web Store and start exporting.
 
 - Export any **currently-open** conversation.
 - All 5 formats (PDF, HTML, Markdown, JSON, Plain text).
-- **3 PDF exports per day.** HTML / Markdown / JSON / TXT have no daily limit.
+- **Single-conversation PDF export is free and unlimited, with no daily cap.** HTML / Markdown / JSON / TXT exports are also unlimited.
 - Advanced settings (timestamp format, thinking inclusion, tool-call inclusion).
 - A single attribution line at the footer of exported files.
 
@@ -421,16 +448,19 @@ Unlocks everything. Pick the tier that matches how you use Claude:
 
 | Plan | Price | Who it's for |
 |---|---|---|
-| **Starter** | $3.99 | One month of full export, for a single cleanup or migration. |
-| **Pro (annual)** | $19 | Best value. Unlimited for a year. |
-| **Lifetime** | $29.88 | Pay once. Works forever, including all future features. |
+| **Starter** | $3.99 / month | One month of full export, for a single cleanup or migration. |
+| **Pro (annual)** | $29.88 / year | Best value if you stay subscribed — works out to $2.49/month. |
+| **Lifetime** | ~~$39~~ **$19** (launch promo) | Pay once. Works forever, including all future features. |
 
 ### What every paid plan includes
 
 - **Bulk export** every conversation on your Claude account into a single ZIP.
+- **Project export** — one ZIP per Claude project, bundling its
+  Instructions, knowledge files, and every conversation in it. Open any
+  `claude.ai/project/<uuid>` page to trigger it. See
+  [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments** — uploaded files and Claude-generated `present_files`
   bundle alongside transcripts.
-- **Unlimited PDF exports** — no 3/day cap.
 - **No branding footer** on any exported file.
 - One license activates on **all your Chromium browsers on the same machine**.
 
@@ -497,6 +527,77 @@ Release notes for AI Chat Archive. For a live feed of fixes between releases, se
 the [extension's Chrome Web Store listing](https://chromewebstore.google.com/detail/ai-chat-archive/jeocjmohgejjmlfdhdeddjceehpahblj).
 
 Versions follow Chrome's required numeric format (no semver suffixes).
+
+## v0.4.9 — August 2026 — Print-safe image sizing
+
+- **Tall photos no longer break PDF pagination.** An uncapped phone photo
+  rendered at natural size could span three printed pages — splitting
+  mid-image and stretching the message bubble into a full blank page.
+  Embedded images are now height-capped (about two-thirds of a printed
+  page, aspect ratio preserved) and always land whole on one page,
+  caption included.
+- Applies to Claude and ChatGPT uploads, generated images, and Cowork
+  inline images alike. Images already smaller than the cap render exactly
+  as before.
+
+## v0.4.8 — August 2026 — Your uploads, finally in your exports
+
+- **Fixed: your uploaded files were missing from batch ZIPs.** With
+  "Include attachments in the ZIP" enabled, the archive bundled pasted-text
+  attachments but silently skipped the images and PDFs you uploaded to the
+  chat. They're now downloaded as the **original files** — byte-identical,
+  real filenames — into each conversation's `attachments/` folder.
+  (Reported by a Pro user — thank you.)
+- **Uploaded images now show in PDF and HTML exports** (free). A
+  single-conversation export renders the pictures you uploaded as real
+  inline images instead of a `📎 filename` line. Per-image 5 MB cap.
+- **Nothing goes missing silently.** Any referenced file the export can't
+  fetch is listed in `_SKIPPED.md` with the reason.
+- More resilient file downloads: each file tries several routes, so
+  attachments keep working even after a chat's code sandbox has expired.
+- Versions 0.4.6 and 0.4.7 were internal pre-release tags folded into
+  this update.
+
+## v0.4.5 — July 2026 — Batch export from your chats list
+
+- **"Export all conversations" now works from the chat-list pages**
+  (`claude.ai/recents`). Previously batch export required opening some
+  conversation first; now it's available right where you see all your
+  chats.
+- Single-conversation export stays disabled on list pages — there's no
+  single conversation in view there.
+
+## v0.4.4 — July 2026 — Cleaner PDF/HTML metadata (lite by default)
+
+- **Lite header by default** — every export (Markdown / HTML / PDF / TXT)
+  keeps just the useful basics: **model + created/updated dates**. The
+  extra traceability fields (provider label, export time, source URL, YAML
+  front matter) are now opt-in via **Settings → "Include full metadata"**.
+- **Fixed the "Source" field in PDFs** — it used to render as a bare link
+  whose URL was invisible in print. With full metadata on, it now shows
+  the actual URL as text.
+- JSON exports keep their structured metadata fields as before.
+
+## v0.4.3 — July 2026 — Project export on multi-organization accounts
+
+- **Fixed: project export failed with a 404** for accounts that belong to
+  more than one Claude organization (for example, a personal account plus
+  a Team or Enterprise workspace). The extension now locates the
+  organization that actually **owns** the project instead of assuming the
+  first one; single-organization accounts are unaffected.
+- If a project still can't be found, the error now names the project and
+  every organization tried, with its status — screenshot it and send it
+  to support.
+
+## v0.4.2 — July 2026 — Rich export metadata (YAML front matter)
+
+- **Markdown exports can start with a YAML front matter block** (`title`,
+  `chatbot`, `model`, `source_url`, `created` / `updated` / `archived`,
+  `created_by`) — ideal for Obsidian, Dataview, and downstream tooling.
+  Fields that aren't available are omitted.
+- The same metadata is surfaced in the JSON, HTML, and TXT exports.
+- **New setting** — "YAML front matter (Markdown)" in the popup's
+  Settings, on by default.
 
 ## v0.4.1 — July 2026 — ChatGPT works on install
 
@@ -568,7 +669,8 @@ Versions follow Chrome's required numeric format (no semver suffixes).
   batch-export per-chat layout, a root `_INDEX.md` listing every
   conversation with status (`OK` / `Skipped: empty` / `Failed: <err>`
   / `Not run`), and `_INCOMPLETE.md` only when the `/docs` or
-  `/files` listing call failed.
+  `/files` listing call failed. Full spec at
+  [the project-export how-to](../faq/how-to-export-claude-project.md).
 - **Memory is not included** — claude.ai does not expose project
   memory in any reachable REST endpoint, and the bundled `README.md`
   documents the omission so it's clear it's not an export bug.
@@ -583,6 +685,114 @@ Versions follow Chrome's required numeric format (no semver suffixes).
 - v0.3.1 followup: project-export UI strings localized across all 10
   shipping locales; Chrome Web Store long descriptions updated to
   mention project export.
+
+## v0.2.141 — May 2026 — Claude-style theme is the default
+
+- HTML and PDF exports now default to a warmer cream-and-serif theme
+  that mirrors reading a chat on claude.ai. The cleaner archival look
+  is still available as **Document** theme in popup → Advanced →
+  Export theme.
+- Existing users who explicitly chose Document on a dev build keep
+  their preference; everyone else picks up the new default on the
+  first export after updating.
+
+## v0.2.139 — May 2026 — Claude-style PDF goes full-bleed
+
+- The cream now reaches the paper edges instead of leaving a 14 mm
+  white frame around the content. PDF print path moved from
+  `@page margin` to `body padding` so the page itself is full-bleed
+  while the content keeps its breathing room.
+- Document theme PDFs unchanged — the historical 14 mm `@page` margin
+  is preserved so headers/footers Chrome draws there have somewhere
+  to live.
+- For the cream to actually print: tick **Background graphics** in
+  Chrome's print dialog. The in-page tip banner calls this out
+  prominently and Chrome remembers the toggle next time.
+
+## v0.2.135 — May 2026 — Claude-style export theme (opt-in)
+
+- New optional theme that uses Iowan Old Style / Charter for Latin
+  body text, Songti SC / Hiragino Mincho for CJK, and a warm
+  `#f9f5ee` page background. Reads like a printed page from the
+  Claude web app.
+- popup → Advanced → Export theme — pick **Claude-style** or
+  **Document**; the default is Document until the v0.2.141
+  switch above.
+- Phase 2 typography lift in the same release: Hiragino Sans GB
+  and Heiti SC added to the default font fallback stack alongside
+  the existing PingFang SC / Microsoft YaHei, so Japanese and older
+  macOS Chinese render in the right visual register.
+
+## v0.2.133 — April 2026 — Markdown rendering polish
+
+- GFM tables (`| col | col |` style) now render as proper `<table>`
+  elements with header / body, alignment, and inline-md inside cells.
+  Used to leak as raw pipe-and-dash text in HTML/PDF exports.
+- v0.2.134 follow-up: ATX headings (`#` through `######`), horizontal
+  rules (`---`, `***`, `___`), blockquotes (`> …`), and inline
+  links (`[label](url)`) all render in HTML/PDF exports. Markdown
+  exports were already fine — this closes the gap between the two.
+
+## v0.2.121 — April 2026 — Visualize-widget export
+
+- Claude's inline visualize widgets — SVG diagrams and HTML mockups
+  Claude generates via `show_widget` — now ship inside HTML/PDF/MD
+  exports instead of being silently dropped, and land as sibling
+  `.svg` / `.html` files in the per-conversation folder of bulk-export
+  ZIPs.
+- v0.2.127 follow-up: colored diagram nodes (`c-blue`, `c-amber`,
+  `c-green`, etc.) now keep their colors in the exported SVG. They
+  used to collapse to all-black flowcharts because Claude's runtime
+  CSS didn't travel with the export.
+
+## v0.2.128 — April 2026 — Welcome page on first install
+
+- Fresh installs open the [aichatarchive.app/welcome](https://aichatarchive.app/welcome)
+  walkthrough in a new tab so users find the floating Export button
+  without hunting through Chrome's puzzle-piece menu.
+- v0.2.129: welcome URL is locale-aware — Japanese-Chrome users land
+  on `/ja/welcome`, Korean on `/ko/welcome`, etc. — across the 9
+  shipping locales at the time. v0.2.132 added `/fr/welcome` to
+  bring the total to 10.
+- v0.2.130: skipped on enterprise-policy and sideloaded installs so
+  IT-managed deployments don't surprise employees with an external
+  tab.
+
+## v0.2.126 — April 2026 — Pick which messages to export
+
+- New **Choose messages…** entry on the floating Export menu opens a
+  side panel with a checkbox per turn. Pick exactly which messages
+  go into the export — useful when only the last reply is worth
+  keeping.
+- Two presets: **All** (default) and **Last turn** (last user
+  question + last Claude answer).
+- Works for every export format including PDF; the print page picks
+  up the selection via URL params.
+
+## v0.2.125 — April 2026 — Floating button → format menu
+
+- The on-page Export button used to export in a single fixed default
+  format. It now opens a small menu so you can pick Markdown / HTML /
+  PDF / JSON / Plain text per export, without having to open the
+  toolbar popup to change format. Keyboard navigation supported.
+
+## v0.2.124 — April 2026 — Localized CWS listing
+
+- Chrome Web Store listing title and short description now ship in 9
+  locales: **en, zh-CN, zh-TW, ja, ko, es, it, de, pt-BR**. Catches
+  native-language Web Store search instead of only the English-locale
+  install funnel.
+- v0.2.132 added French (fr) — 10 locales total.
+
+## v0.2.123 — April 2026 — Free unlimited PDF
+
+- Daily 3-PDF cap removed. PDF generation runs entirely on your
+  machine via the browser's print pipeline — there's no server cost
+  to cap.
+- The paid tier's three remaining benefits stand: bulk export of
+  every conversation as a ZIP, attachment bundling (real file bytes
+  alongside the transcript), and no branding footer on exported
+  files.
 
 ## v0.2.119 — April 2026
 
@@ -1447,7 +1657,8 @@ FILE: faq/pdf-vs-html-vs-markdown.md
 - **Markdown** if you're putting it into Obsidian, Notion, a wiki, or grepping it
   later.
 
-Below is the full comparison.
+Single-conversation exports are free in all five formats. PDF export is unlimited,
+with no daily cap. Below is the full comparison.
 
 ## Side-by-side
 
@@ -1460,7 +1671,7 @@ Below is the full comparison.
 | Searchable with `grep` | ❌ | Partial | ✅ |
 | File size (typical) | 800 KB – 3 MB | 300 KB – 1 MB | 20 – 200 KB |
 | Bundles attachments in ZIP | ❌ (can't) | ✅ Paid | ✅ Paid |
-| Free-tier daily limit | 3/day | Unlimited | Unlimited |
+| Free single-conversation exports | Unlimited | Unlimited | Unlimited |
 | Round-trip to Claude.ai | ❌ No | ❌ No | ❌ No |
 | Good for long-term archive | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
@@ -1476,7 +1687,6 @@ Below is the full comparison.
 
 - Can't bundle attachments. Uploaded files and Claude-generated `present_files`
   don't fit into PDF output.
-- Capped at 3 per day on the free tier. Paid license removes the cap.
 - Once generated, you can't easily edit or re-process the content.
 
 ## Pick HTML if…
@@ -1594,8 +1804,8 @@ A single ZIP, named after the project, containing:
     cancelled mid-run.
 - **`conversations/`** — one folder per chat, named `<date>_<title>`. Each
   folder holds the transcript in your chosen format and, if **Include
-  attachments** is on, an `attachments/` subfolder. Same layout as the
-  batch-export ZIP.
+  attachments** is on, an `attachments/` subfolder. Same layout as
+  [the batch-export ZIP](../spec/zip-bundle-structure.md).
 - **`_INDEX.md`** — table of every conversation with status: `OK` /
   `Skipped: empty` / `Failed: <error>` / `Not run` (the last appears when
   you cancel mid-run and some conversations were never reached).
@@ -1650,10 +1860,10 @@ export.
 
 ## Related
 
-- How to export a Claude project (step-by-step) — `faq/how-to-export-claude-project.md`
-- ZIP bundle structure — `spec/zip-bundle-structure.md`
-- Features — `docs/features.md`
-- Pricing — `docs/pricing.md`
+- [How to export a Claude project (step-by-step)](how-to-export-claude-project.md)
+- [ZIP bundle structure](../spec/zip-bundle-structure.md)
+- [Features](../docs/features.md)
+- [Pricing](../docs/pricing.md)
 
 
 ==============================================================
@@ -1669,10 +1879,12 @@ project as a whole; you can only export individual chats one at a time.
 
 AI Chat Archive (v0.3.0+) adds a dedicated **Project Export** mode that
 bundles an entire project — Instructions, knowledge files, every
-conversation, every attachment — into one ZIP.
+conversation, every attachment — into one ZIP. This page walks through it
+end to end.
 
-Project Export is a paid feature, gated by the same license as Batch
-Export.
+> Project Export is a paid feature, gated by the same license as Batch
+> Export. See [pricing](../docs/pricing.md) for tiers and the
+> [features page](../docs/features.md) for what every paid plan includes.
 
 ## Step 1: Open the project page
 
@@ -1682,49 +1894,68 @@ Navigate to the project you want to export:
 https://claude.ai/project/<project-uuid>
 ```
 
+You can get there from the **Projects** section in the Claude.ai sidebar,
+or by clicking the project chip at the top of any chat that belongs to it.
+
 The extension only shows the Project Export button when the URL matches
 `/project/<uuid>` — not on plain `/chat/<id>` pages.
 
 ## Step 2: Open the extension and pick a format
 
-Click the AI Chat Archive icon in the toolbar, then pick a format:
-**Markdown**, **HTML**, **JSON**, or **TXT**.
+Click the AI Chat Archive icon in the toolbar to open the popup, then pick
+your format:
 
-**PDF is not supported for Project Export** — use single-chat export if you
-need a PDF for one conversation.
+- **Markdown** (`.md`) — for Obsidian, Notion, grep, future ingestion.
+- **HTML** (`.html`) — self-contained per-chat archive, browsable offline.
+- **JSON** (`.json`) — programmatic ingestion / custom pipelines.
+- **TXT** (`.txt`) — compliance archives, search indexes, raw text.
 
-To bundle uploaded files alongside transcripts, check **Include attachments
-in the ZIP**.
+**PDF is not supported for Project Export.** Use single-chat export if you
+specifically need a PDF for one conversation in the project.
 
-## Step 3: Trigger the export
+If you want to bundle uploaded files alongside the transcripts, check
+**Include attachments in the ZIP** in the popup.
 
-Two equivalent triggers:
+## Step 3: Click "Export this project"
 
-- **Popup**: click **Export this project (ZIP)** on the paid card.
-- **Floating button on the page**: click the small FAB injected on
-  `/project/<id>` pages. It shows a live progress panel during the run.
+You have two equivalent triggers:
 
-Free users see an upsell variant of the button which opens the checkout
-page instead.
+- **Popup**: the paid card on a project page shows an **Export this
+  project (ZIP)** button. Click it.
+- **Floating action button on the page**: while on a `/project/<id>` page,
+  AI Chat Archive injects a small floating button. Click it to start the
+  same export without opening the popup. The floating button shows a live
+  progress panel during the run.
 
-## Step 4: Watch progress
+Free users see an upsell variant of the button instead, which opens the
+checkout page.
+
+## Step 4: Watch the progress
 
 Project Export runs in this order:
 
-1. **Lists knowledge docs** from `/projects/<id>/docs`.
-2. **Lists files** from `/projects/<id>/files`.
-3. **Writes `files/_INDEX.md`** after all knowledge files have been added
-   to the archive (or their cancelled tail recorded), so the index reflects
-   the actual names written.
-4. **Iterates conversations** in the project.
-5. **Writes the conversation `_INDEX.md`** with per-conversation status.
+1. **Lists knowledge docs** — fetches the project's text knowledge from
+   `/projects/<id>/docs`.
+2. **Lists files** — fetches binary uploads from `/projects/<id>/files`.
+3. **Writes the files index** — once all knowledge files have been added
+   to the archive (or their cancelled tail recorded), `files/_INDEX.md`
+   is written so it reflects the actual names that landed.
+4. **Iterates conversations** — for each chat in the project, fetches the
+   full transcript and (if enabled) any attachments.
+5. **Writes the conversation index** — `_INDEX.md` is added with the
+   per-conversation status of each entry.
 6. **Finalizes** — generates and downloads the ZIP.
 
-You can cancel mid-run. Conversations that were never reached are marked
-`Not run` in `_INDEX.md`; remaining knowledge files are logged in
-`files/_SKIPPED.md` with reason `cancelled by user`.
+The popup progress bar and the on-page floating panel both reflect the
+current step. You can cancel mid-run: conversations that were never
+reached are marked **`Not run`** in `_INDEX.md`, and any remaining
+knowledge files are logged in `files/_SKIPPED.md` with reason `cancelled
+by user`.
 
 ## Step 5: Open the ZIP
+
+The ZIP is named after the project (sanitized for filesystem safety).
+Inside, the layout is:
 
 ```
 <Project Name>/
@@ -1743,28 +1974,50 @@ You can cancel mid-run. Conversations that were never reached are marked
   _INCOMPLETE.md        # only when /docs or /files listing failed
 ```
 
-The `conversations/` folder uses the same naming and attachment
-conventions as the regular batch-export ZIP, so importers that already
-handle batch ZIPs handle project ZIPs without changes.
+The `conversations/` folder follows the same naming and attachment
+conventions as the [ZIP bundle structure spec](../spec/zip-bundle-structure.md),
+so importers that already handle batch ZIPs handle project ZIPs without
+changes.
 
 ## What's not included (and why)
 
 - **Memory.** The project "Memory" panel in the claude.ai UI is not exposed
   by any reachable REST endpoint. The `README.md` inside the ZIP states
   this explicitly so future readers know the omission is intentional, not
-  an export bug. Instructions and knowledge docs are exported in full.
-- **Sharing / collaborator info** — privacy.
-- **Workspace UI state** — interface state, not project content.
+  an export bug. Project Instructions and knowledge docs — both of which
+  you edit directly — are exported in full.
+- **Sharing / collaborator info.** For privacy, the export does not list
+  who else has access to the project.
+- **Workspace UI state.** Sidebar layout, pinned messages, and similar
+  interface state are not project content.
 
 ## Troubleshooting
 
-- **Button doesn't appear** — confirm the URL is `claude.ai/project/<uuid>`,
-  not `claude.ai/chat/<id>`. Project Export deliberately hides on chat pages.
-- **"Upgrade" / upsell button** — Project Export is paid. Activate a license
-  in the popup; the button flips without a reload.
-- **`_INCOMPLETE.md` shows up** — the `/docs` or `/files` listing call failed
-  (network, expired session). Re-run while signed in.
-- **Mutex error** — only one paid export at a time. Wait or cancel the other.
+**The button doesn't appear.**
+Confirm the URL is `claude.ai/project/<uuid>`, not `claude.ai/chat/<id>`.
+Project Export deliberately hides on chat pages — use Batch Export there.
+
+**I see an "Upgrade" / upsell button instead.**
+Project Export is a paid feature. Activate a license in the popup and the
+button flips to the working variant without needing a reload.
+
+**The export stops with `_INCOMPLETE.md` in the ZIP.**
+The `/docs` or `/files` listing call failed (network error, expired
+session). Re-run while signed in. The conversations folder is still
+populated normally; only the knowledge `files/` directory may be partial.
+
+**I started Batch Export while Project Export was running (or vice
+versa).**
+The extension blocks this with a reciprocal mutex — one paid export at a
+time. Wait for the running one to finish or cancel it.
+
+## Related
+
+- [Does AI Chat Archive work with Claude Projects?](does-it-work-with-projects.md)
+- [How to export a single Claude chat](how-to-export-claude-chat.md)
+- [ZIP bundle structure](../spec/zip-bundle-structure.md)
+- [Pricing](../docs/pricing.md)
+- [Features](../docs/features.md)
 
 
 ==============================================================
@@ -1956,7 +2209,8 @@ A Chrome extension purpose-built for Claude export.
 
 **For bulk backup** (all your conversations at once, including attachments):
 
-1. Activate a paid license (one-time $3.99 / annual $19 / lifetime $29.88).
+1. Activate a paid license (Starter $3.99/mo, Pro $29.88/yr, **Lifetime $19** —
+   launch promo, normally $39).
 2. Check **Include attachments in the ZIP** in the extension popup.
 3. Click **Export all**.
 4. You get a ZIP with one folder per conversation, attachments bundled.
@@ -2206,19 +2460,92 @@ FILE: faq/how-to-export-claude-cowork-tasks.md
 
 # How to export a Claude Cowork task
 
-Claude's **Cowork** surface (the "Cowork" toggle next to "Chat", grouped under **Chats and tasks** in the sidebar) runs agentic, multi-step tasks — Claude works in a cloud sandbox, runs tools, searches the web, and produces files. A Cowork task lives at a URL like `https://claude.ai/cowork/cse_<id>`.
+Claude's **Cowork** surface (the "Cowork" toggle next to "Chat", grouped
+under **Chats and tasks** in the sidebar) runs agentic, multi-step tasks —
+Claude works in a cloud sandbox, runs tools, searches the web, and produces
+files. A Cowork task lives at a URL like:
 
-It is a **different kind of session** from an ordinary chat or a Project, and Claude.ai gives you no way to export one. AI Chat Archive (**v0.3.8+**) adds first-class Cowork export: the full transcript in every format, plus the files the task produced.
+```
+https://claude.ai/cowork/cse_<id>
+```
+
+It is a **different kind of session** from an ordinary chat or a Project,
+and Claude.ai gives you no way to export one. AI Chat Archive (**v0.3.8+**)
+adds first-class Cowork export: the full transcript in every format, plus
+the files the task produced.
+
+> The **transcript** is free in every format. Bundling the task's **output
+> files** into the ZIP is a paid feature, gated by the same license as
+> Project / Batch export — see [pricing](../docs/pricing.md).
+
+## What "Cowork" is, and how it differs from a chat or project
 
 - A **chat** (`/chat/<id>`) is a plain conversation.
-- A **project** (`/cowork/project/<id>`) groups chats with shared instructions and knowledge files.
-- A **Cowork task** (`/cowork/cse_<id>`) is an agent run: Claude executes a goal step by step using tools (Bash, file edits, web search) and delivers output files to an **Outputs** panel. Under the hood it is a Claude Code session, which is why the standard export options don't reach it.
+- A **project** (`/cowork/project/<id>`) groups chats with shared
+  instructions and knowledge files — see
+  [how to export a project](how-to-export-claude-project.md).
+- A **Cowork task** (`/cowork/cse_<id>`) is an agent run: Claude executes
+  a goal step by step, using tools (Bash, file edits, web search) and
+  delivering output files to an **Outputs** panel. Under the hood it is a
+  Claude Code session, which is why the standard export options don't reach
+  it.
 
-**How to export:** open the task (`https://claude.ai/cowork/cse_<id>`), then use the floating **Export** button (it moves aside so it never covers Claude's right-hand Progress / Outputs / Context panel) or the toolbar popup, and pick a format (Markdown / HTML / PDF / JSON / TXT).
+## Step 1: Open the Cowork task
 
-**What you get:** your prompts and Claude's replies in order; a readable trace of the tools the task ran (commands, file writes, web searches) and their results, with internal scaffolding filtered out; and — on a paid plan — every output file the task delivered (PDFs, spreadsheets, Word docs, images, text) bundled into the ZIP under `outputs/`. Long tasks export in full (the extension pages through the entire event history); non-Latin content and filenames (e.g. Chinese) are preserved end to end. The transcript is free in every format; bundling the output files is a paid feature, gated by the same license as Project / Batch export.
+Open the task you want to save:
 
-**Not covered yet:** batch export of Cowork tasks (export is one task at a time), and the live sandbox environment itself (only the transcript and delivered output files are exported).
+```
+https://claude.ai/cowork/cse_<id>
+```
+
+You can get there from **Chats and tasks** in the Claude.ai sidebar, or by
+opening any task from the Cowork surface.
+
+## Step 2: Export it
+
+Two ways, exactly like a normal chat:
+
+- **Floating button** — click the **Export** button AI Chat Archive shows
+  on the page. On a Cowork task it automatically moves aside so it never
+  covers Claude's right-hand Progress / Outputs / Context panel.
+- **Toolbar popup** — click the extension icon, pick a format, and export.
+
+Pick any format:
+
+- **Markdown** (`.md`) — for Obsidian, Notion, grep, future ingestion.
+- **HTML** (`.html`) — self-contained, browsable offline.
+- **PDF** — a clean printable copy.
+- **JSON** (`.json`) — programmatic ingestion.
+- **TXT** (`.txt`) — raw text.
+
+## What you get
+
+The export reconstructs the task as a readable transcript:
+
+- Your prompts and Claude's replies, in order.
+- A readable trace of the **tools** the task ran (commands, file writes,
+  web searches) and their results — the agentic work, not a wall of raw
+  logs. Internal scaffolding is filtered out.
+- **Output files** (paid): every file the task delivered to the Outputs
+  panel — PDFs, spreadsheets, Word documents, images, text — downloaded
+  with their real bytes and bundled into the ZIP under `outputs/`.
+
+Long tasks export **in full** — the extension pages through the entire
+event history, so nothing is truncated. Non-Latin content and filenames
+(e.g. Chinese) are preserved end to end, including inside the ZIP.
+
+## What isn't covered (yet)
+
+- **Batch export of Cowork tasks** — export is one task at a time. Batch
+  and Project export cover chats and projects respectively.
+- The task's live sandbox environment itself — only the transcript and the
+  delivered output files are exported, not the container.
+
+## Related
+
+- [Does it work with Claude Projects?](does-it-work-with-projects.md)
+- [How to export a Claude chat](how-to-export-claude-chat.md)
+- [What every paid plan includes](../docs/features.md)
 
 
 ==============================================================

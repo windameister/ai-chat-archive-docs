@@ -11,7 +11,7 @@ No license required. Install from the Chrome Web Store and start exporting.
 
 - Export any **currently-open** conversation.
 - All 5 formats (PDF, HTML, Markdown, JSON, Plain text).
-- **3 PDF exports per day.** HTML / Markdown / JSON / TXT have no daily limit.
+- **Single-conversation PDF export is free and unlimited, with no daily cap.** HTML / Markdown / JSON / TXT exports are also unlimited.
 - Advanced settings (timestamp format, thinking inclusion, tool-call inclusion).
 - A single attribution line at the footer of exported files.
 
@@ -34,7 +34,6 @@ Unlocks everything. Pick the tier that matches how you use Claude:
   [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments** — uploaded files and Claude-generated `present_files`
   bundle alongside transcripts.
-- **Unlimited PDF exports** — no 3/day cap.
 - **No branding footer** on any exported file.
 - One license activates on **all your Chromium browsers on the same machine**.
 

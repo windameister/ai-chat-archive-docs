@@ -30,7 +30,7 @@ A small popup appears. You'll see:
 
 | Format | Best for | Notes |
 |---|---|---|
-| **PDF** | Sharing, printing, archival | Rendered through Chrome's print engine. Attachments cannot be bundled. Free tier: 3 PDFs/day. |
+| **PDF** | Sharing, printing, archival | Rendered through Chrome's print engine. Attachments cannot be bundled. Single-conversation PDF export is free and unlimited, with no daily cap. |
 | **HTML** | Browsing offline, web archival | Self-contained single file with embedded CSS. Looks like claude.ai. |
 | **Markdown** | Notes, Obsidian, Notion, grep | Pure text. Attachments referenced but not embedded. See [spec](../spec/markdown-format.md). |
 
