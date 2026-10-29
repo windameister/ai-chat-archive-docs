@@ -5,7 +5,7 @@ extension produces before you install.
 
 All samples here are synthetic — the conversations never happened with real users,
 filenames don't correspond to real files, and any identifying details are fabricated.
-See the [contribution guidelines](https://github.com/windameister/ai-chat-archive-docs/blob/main/CONTRIBUTING.md#sample-files-privacy-note) for
+See the [contribution guidelines](../CONTRIBUTING.md#sample-files-privacy-note) for
 how to submit additional examples.
 
 ## Available samples
@@ -51,4 +51,4 @@ These files are plain committed text, so you can:
   fixture.
 - Fetch any file via its raw GitHub URL for live-parsing tests in CI.
 
-License for these sample files follows the repo-wide [CC BY 4.0](https://github.com/windameister/ai-chat-archive-docs/blob/main/LICENSE).
+License for these sample files follows the repo-wide [CC BY 4.0](../LICENSE).

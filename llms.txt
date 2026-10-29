@@ -39,6 +39,7 @@ text of every document in this repository, see [`llms-full.txt`](/llms-full.txt)
 ## Integrations
 
 - [Obsidian vault template](/integrations/obsidian/)
+- [Notion import recipe](/integrations/notion/)
 
 ## Optional
 

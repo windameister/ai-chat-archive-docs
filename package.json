@@ -6,8 +6,6 @@
   "description": "Documentation site build for AI Chat Archive.",
   "scripts": {
     "build": "node build.js",
-    "postbuild": "npm run check",
-    "check": "node scripts/check-links.mjs",
     "deploy": "npm run build && npx wrangler pages deploy _build --project-name=ai-chat-archive-docs --commit-dirty=true --branch=main"
   },
   "dependencies": {

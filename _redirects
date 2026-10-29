@@ -24,10 +24,12 @@
 # onto the current directory (e.g. /faq/spec/markdown-format/, really
 # /spec/markdown-format/). There are NO real pages under /faq/spec/,
 # /docs/spec/, or /faq/docs/ — every path under them is a bug pointing at a
-# real page one level up. build.js expands these wildcard templates for all
-# built destinations, including their no-slash and index.html variants. This
-# keeps every target canonical and avoids chains or redirects to missing pages.
-# /docs/features/* stays enumerated because /docs/features/ is a real page.
+# real page one level up. Splat the whole prefix so we catch every spec/doc
+# variant (markdown-format, html-format, console-snippet, the /spec/ index, …)
+# instead of enumerating one at a time and waiting for Google to surface the
+# next miss. An empty splat (/faq/spec/ → /spec/) lands on the /spec/ index,
+# which exists. /docs/features/* stays enumerated below because /docs/features/
+# is itself a real page — a splat there would clobber it.
 /faq/spec/*   /spec/:splat   301
 /docs/spec/*  /spec/:splat   301
 /faq/docs/*   /docs/:splat   301
@@ -37,8 +39,3 @@
 /docs/features/changelog/       /docs/changelog/        301
 /docs/features/privacy/         /docs/privacy/          301
 /docs/features/getting-started/ /docs/getting-started/  301
-
-# The available integration guide.
-/integrations  /integrations/obsidian/  301
-/integrations/  /integrations/obsidian/  301
-/integrations/index.html  /integrations/obsidian/  301

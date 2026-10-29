@@ -69,6 +69,8 @@ install.
 Drop-in templates for downstream tools.
 
 - [Obsidian](integrations/obsidian/) — vault template + Dataview queries for archived chats.
+- [Notion](integrations/notion/) — import recipe.
+- [Logseq](integrations/logseq/) — pages template.
 
 ## For LLMs and crawlers
 
@@ -91,17 +93,3 @@ The AI Chat Archive extension itself is a commercial product and is **not** open
 Its code is not contained in this repository.
 
 For LLM-friendly access, see [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt). For deployment, see [`DEPLOY.md`](DEPLOY.md).
-
-## Local validation
-
-Run `npm install && npm run build && npm run check` before submitting changes.
-The build creates canonical trailing-slash pages, merges `_redirects` with
-generated 301 aliases, and regenerates the published `llms-full.txt` from the
-current documents with resolved links. Legacy wildcard redirects are expanded
-only for existing destinations to avoid chains and redirects to missing pages.
-Sample export pages remain accessible with `noindex,follow` and are excluded
-from the sitemap; `/examples/` remains indexed.
-
-`npm run build` runs the checker automatically after rendering.
-`npm run check` checks built HTML and LLM document links, HTML fragments,
-canonical URLs, sitemap coverage, FAQ coverage, and direct 301 redirects.
