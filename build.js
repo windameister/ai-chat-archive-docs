@@ -2,7 +2,7 @@
 // theme, and copy the raw .md alongside so LLM crawlers can still fetch the
 // canonical markdown. Output goes to _build/.
 
-import { readFile, writeFile, mkdir, readdir, copyFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, copyFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, relative, dirname, extname, basename } from 'node:path';
 import { marked } from 'marked';
@@ -21,7 +21,7 @@ const SITE_NAME = 'AI Chat Archive Documentation';
 // the snippet inside `wrap()` next to <link rel="canonical">.
 
 const SKIP_DIRS = new Set([
-  '.git', 'node_modules', '_build', '.wrangler',
+  '.git', 'node_modules', '_build', '.wrangler', 'scripts',
 ]);
 
 const SKIP_FILES = new Set([
@@ -40,7 +40,7 @@ const SKIP_FILES = new Set([
 // Nested README.md files (e.g. integrations/obsidian/README.md) are kept and
 // become their containing directory's index page.
 const SKIP_PATHS = new Set([
-  'README.md',
+  'README.md', 'llms-full.txt',
 ]);
 
 async function* walk(dir) {
@@ -54,6 +54,19 @@ async function* walk(dir) {
     }
   }
 }
+
+const isSample = srcPath => srcPath.startsWith('examples/') && basename(srcPath) !== 'README.md';
+const DEFAULT_DESCRIPTION = 'Export Claude and ChatGPT chats to PDF, Markdown, HTML, JSON or TXT, and whole projects to ZIP. Free unlimited single-chat PDF. 100% local processing.';
+const FAQ_DESCRIPTION = 'Find answers about exporting Claude and ChatGPT chats, Projects, Cowork tasks, artifacts, privacy, and choosing PDF, HTML or Markdown.';
+
+// Stable fragment IDs for documentation links (including duplicate headings).
+const headingIds = new Map();
+marked.use({ renderer: { heading(text, level, raw) {
+  const slug = raw.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^\p{L}\p{N}_\s-]/gu, '').trim().replace(/\s+/g, '-');
+  const count = headingIds.get(slug) || 0;
+  headingIds.set(slug, count + 1);
+  return `<h${level} id="${escapeHtml(slug + (count ? `-${count}` : ''))}">${text}</h${level}>\n`;
+} } });
 
 const wrap = (title, body, currentPath, schema, srcPath) => {
   const pageTitle = currentPath === '/'
@@ -76,7 +89,8 @@ const wrap = (title, body, currentPath, schema, srcPath) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(pageTitle)}</title>
-  <meta name="description" content="Export Claude and ChatGPT chats to PDF, Markdown, HTML, JSON or TXT, and whole projects to ZIP. Free unlimited single-chat PDF. 100% local processing.">
+  <meta name="description" content="${escapeHtml(currentPath === '/faq/' ? FAQ_DESCRIPTION : DEFAULT_DESCRIPTION)}">
+  ${isSample(srcPath) ? '<meta name="robots" content="noindex,follow">' : ''}
   <link rel="canonical" href="${BASE_URL}${currentPath}">
   ${schemaBlock}
   <style>
@@ -307,7 +321,7 @@ function buildSchema(srcPath, title, md, urlPath) {
     };
   }
 
-  if (urlPath.startsWith('/faq/')) {
+  if (urlPath.startsWith('/faq/') && urlPath !== '/faq/') {
     const answer = extractShortAnswer(md);
     return {
       "@context": "https://schema.org",
@@ -354,6 +368,7 @@ async function buildOne(srcPath) {
   const isIndex = srcPath === 'index.md';
   const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || basename(srcPath, '.md');
   const adjusted = rewriteLinks(raw, srcPath);
+  headingIds.clear();
   const bodyHtml = marked.parse(adjusted, { gfm: true, breaks: false });
   const urlPath = urlPathFor(srcPath);
   const schema = buildSchema(srcPath, title, raw, urlPath);
@@ -387,7 +402,7 @@ async function writeSitemap(srcPaths) {
   const today = new Date().toISOString().slice(0, 10);
   const baseUrl = 'https://docs.aichatarchive.app';
   const urls = srcPaths
-    .filter(p => p.endsWith('.md'))
+    .filter(p => p.endsWith('.md') && !isSample(p))
     .map(p => urlPathFor(p))
     .filter((p, i, arr) => arr.indexOf(p) === i)  // dedupe
     .sort();
@@ -403,6 +418,33 @@ async function writeSitemap(srcPaths) {
   await writeFile(join(OUT, 'sitemap.xml'), xml);
 }
 
+// Expand legacy wildcard rules to known pages so every target is a final
+// canonical page, including requests without a slash or with index.html.
+async function writeRedirects(srcPaths) {
+  const pages = srcPaths.map(urlPathFor).sort();
+  const handWritten = await readFile('_redirects', 'utf8');
+  const rules = [];
+  for (const line of handWritten.split('\n')) {
+    const fields = line.trim().split(/\s+/);
+    if (line.trim().startsWith('#') || fields.length < 3) { rules.push(line); continue; }
+    const [from, to, status] = fields;
+    if (!from.endsWith('*')) { rules.push(line); continue; }
+    const prefix = to.replace(':splat', '');
+    for (const page of pages.filter(p => p.startsWith(prefix))) {
+      const alias = from.slice(0, -1) + page.slice(prefix.length);
+      for (const variant of [alias, alias.slice(0, -1), alias + 'index.html']) {
+        rules.push(`${variant}  ${page}  ${status}`);
+      }
+    }
+  }
+  rules.push('', '# Generated canonical URL redirects (all built pages).');
+  for (const page of pages) {
+    if (page !== '/') rules.push(`${page.slice(0, -1)}  ${page}  301`);
+    rules.push(`${page}index.html  ${page}  301`);
+  }
+  await writeFile(join(OUT, '_redirects'), rules.join('\n') + '\n');
+}
+
 async function copyAsIs(srcPath) {
   const dst = join(OUT, srcPath);
   await mkdir(dirname(dst), { recursive: true });
@@ -410,7 +452,8 @@ async function copyAsIs(srcPath) {
 }
 
 async function build() {
-  if (!existsSync(OUT)) await mkdir(OUT, { recursive: true });
+  await rm(OUT, { recursive: true, force: true });
+  await mkdir(OUT, { recursive: true });
 
   const builtPaths = [];
 
@@ -432,6 +475,11 @@ async function build() {
   }
 
   await writeSitemap(builtPaths);
+  await writeRedirects(builtPaths);
+  // Resolve links in each document's source context before concatenation.
+  const fullDocs = await Promise.all(builtPaths.sort().map(async path =>
+    `==============================================================\nFILE: ${path}\n==============================================================\n\n${rewriteLinks(stripFrontMatter(await readFile(path, 'utf8')), path)}`));
+  await writeFile(join(OUT, 'llms-full.txt'), '# AI Chat Archive — Full documentation\n\nPublished documentation with links resolved to site URLs.\n\n' + fullDocs.join('\n\n'));
 
   console.log(`✓ Built site to ${OUT}/ (${builtPaths.length} pages)`);
 }
