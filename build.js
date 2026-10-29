@@ -56,6 +56,9 @@ async function* walk(dir) {
 }
 
 const wrap = (title, body, currentPath, schema, srcPath) => {
+  const pageTitle = currentPath === '/'
+    ? 'Claude & ChatGPT Chat and Project Export — AI Chat Archive Docs'
+    : `${title} — AI Chat Archive Docs`;
   // Build a "..back to home" crumb only when not at root
   const crumb = currentPath === '/' ? '' :
     `<nav class="crumbs"><a href="/">← AI Chat Archive Docs</a></nav>`;
@@ -72,8 +75,8 @@ const wrap = (title, body, currentPath, schema, srcPath) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(title)} — AI Chat Archive Docs</title>
-  <meta name="description" content="Documentation for AI Chat Archive — a Chrome extension that exports Claude.ai conversations to PDF, HTML, or Markdown.">
+  <title>${escapeHtml(pageTitle)}</title>
+  <meta name="description" content="Export Claude and ChatGPT chats to PDF, Markdown, HTML, JSON or TXT, and whole projects to ZIP. Free unlimited single-chat PDF. 100% local processing.">
   <link rel="canonical" href="${BASE_URL}${currentPath}">
   ${schemaBlock}
   <style>

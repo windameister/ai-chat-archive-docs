@@ -26,7 +26,7 @@ See the [format specs](../spec/) for the exact structure each one produces.
 
 | Mode | Scope | URL it activates on | Tier |
 |---|---|---|---|
-| **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free (PDF capped 3/day) |
+| **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free, including unlimited PDF exports with no daily cap |
 | **Batch export** | Every conversation in your account, as one ZIP | `claude.ai/chat/<id>` | Paid |
 | **Project export** | One whole project (Instructions, knowledge files, every conversation in it), as one ZIP | `claude.ai/project/<uuid>` | Paid |
 
@@ -72,7 +72,7 @@ Available to every user, no license required:
 - Export the **currently open** conversation.
 - All 5 formats (PDF, HTML, Markdown, JSON, TXT).
 - Advanced settings (timestamp format, thinking inclusion, tool-call inclusion).
-- **PDF daily quota: 3 per day.** HTML / Markdown / JSON / TXT have no quota.
+- **Single-conversation PDF export is free and unlimited, with no daily cap.** HTML / Markdown / JSON / TXT exports are also unlimited.
 - A single attribution line in the exported file footer.
 
 Free tier is enough for occasional backups and casual users.
@@ -89,7 +89,6 @@ Activates with a license key from <https://aichatarchive.app>. Unlocks:
 - **Include attachments in the ZIP** — bundle uploaded files and
   Claude-generated `present_files` alongside their transcripts. See the
   [ZIP bundle structure](../spec/zip-bundle-structure.md).
-- **Unlimited PDF exports** — no more 3/day cap.
 - **No branding footer** in exported files.
 - **Filter by date or title** before bulk export (upcoming).
 

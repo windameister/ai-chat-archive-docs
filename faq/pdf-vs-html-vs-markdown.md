@@ -8,7 +8,8 @@
 - **Markdown** if you're putting it into Obsidian, Notion, a wiki, or grepping it
   later.
 
-Below is the full comparison.
+Single-conversation exports are free in all five formats. PDF export is unlimited,
+with no daily cap. Below is the full comparison.
 
 ## Side-by-side
 
@@ -21,7 +22,7 @@ Below is the full comparison.
 | Searchable with `grep` | ❌ | Partial | ✅ |
 | File size (typical) | 800 KB – 3 MB | 300 KB – 1 MB | 20 – 200 KB |
 | Bundles attachments in ZIP | ❌ (can't) | ✅ Paid | ✅ Paid |
-| Free-tier daily limit | 3/day | Unlimited | Unlimited |
+| Free single-conversation exports | Unlimited | Unlimited | Unlimited |
 | Round-trip to Claude.ai | ❌ No | ❌ No | ❌ No |
 | Good for long-term archive | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
@@ -37,7 +38,6 @@ Below is the full comparison.
 
 - Can't bundle attachments. Uploaded files and Claude-generated `present_files`
   don't fit into PDF output.
-- Capped at 3 per day on the free tier. Paid license removes the cap.
 - Once generated, you can't easily edit or re-process the content.
 
 ## Pick HTML if…
