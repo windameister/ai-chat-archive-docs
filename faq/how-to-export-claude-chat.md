@@ -63,8 +63,7 @@ A Chrome extension purpose-built for Claude export.
 
 **For bulk backup** (all your conversations at once, including attachments):
 
-1. Activate a paid license (Starter $3.99/mo, Pro $29.88/yr, **Lifetime $19** —
-   launch promo, normally $39).
+1. Activate a paid license (Starter $3.99/mo, Pro $29.88/yr, **Lifetime $39**).
 2. Check **Include attachments in the ZIP** in the extension popup.
 3. Click **Export all**.
 4. You get a ZIP with one folder per conversation, attachments bundled.
