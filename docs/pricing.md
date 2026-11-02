@@ -62,7 +62,7 @@ Via Polar:
 
 ## Refund policy
 
-30-day money-back guarantee, no questions asked. Email <hello@aichatarchive.app>
+14-day refund window, no questions asked. Email <hello@aichatarchive.app>
 with your license key.
 
 Refunded licenses are revoked; the extension checks revocation status when it

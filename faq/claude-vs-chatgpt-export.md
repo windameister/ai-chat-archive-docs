@@ -1,8 +1,10 @@
 # Claude vs ChatGPT: which one is easier to export?
 
 **Short answer:** ChatGPT has a built-in bulk export (email-delivered ZIP of JSON and
-HTML), which works but is awkward to use in other tools. Claude has no native export
-at all; you need a third-party tool like AI Chat Archive for anything beyond copy-paste.
+HTML), which works but is awkward to use in other tools. Claude's official data export
+is requested from Settings → Privacy and delivered through an email link; it is an
+account-data export rather than a download of one selected project or chat. For
+per-chat or per-project files you need a third-party tool like AI Chat Archive.
 
 This page is a factual comparison, written from the perspective of someone who just
 wants their conversations *out* of the web UI and *into* a file they own.
@@ -34,10 +36,11 @@ wants their conversations *out* of the web UI and *into* a file they own.
 - Rate-limited (you can't export every day).
 - UX is designed for "I'm leaving the platform," not "I'm backing up my work."
 
-### Claude's native export: none
+### Claude's native export: account-wide only
 
-As of April 2026, Anthropic does not offer any built-in way to export a Claude
-conversation to a file. Your options are:
+Claude's official data export is requested from Settings → Privacy and delivered
+through an email link. That is an account-data export workflow, not a way to save
+one selected chat or project as a file. For individual files, your options are:
 
 1. Copy-paste manually (loses formatting, attachments, artifacts).
 2. Use a third-party extension like AI Chat Archive.
@@ -87,8 +90,9 @@ attachments**:
 - **Claude → AI Chat Archive**: one click. Every conversation gets its own folder,
   attachments bundled, artifacts rendered correctly.
 
-Claude still has no native export at all, so a third-party tool is the only option
-there — which is why we built AI Chat Archive. For ChatGPT you have a choice: the
+Claude's official export is an account-data export delivered by email, so for
+per-chat or per-project files a third-party tool is the option there — which is
+why we built AI Chat Archive. For ChatGPT you have a choice: the
 native bulk export for a whole-account dump, or AI Chat Archive for clean
 per-conversation files.
 
