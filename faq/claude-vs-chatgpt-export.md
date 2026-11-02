@@ -14,11 +14,11 @@ wants their conversations *out* of the web UI and *into* a file they own.
 | Capability | **ChatGPT** | **Claude** |
 |---|---|---|
 | Built-in single-conversation export | ❌ No | ❌ No |
-| Built-in bulk account-wide export | ✅ Yes (via Settings → Data Controls → Export) | ❌ No |
-| Delivery method | Email link (24-hour expiry) | N/A |
-| Native file formats | HTML, JSON | N/A |
-| Includes uploaded attachments | ⚠️ References only (attachments not bundled) | N/A |
-| Includes artifacts / canvas documents | ⚠️ As HTML text, no live render | N/A |
+| Built-in bulk account-wide export | ✅ Yes (via Settings → Data Controls → Export) | ✅ Account-data export (requested from Settings → Privacy) |
+| Delivery method | Email link (24-hour expiry) | Email link |
+| Native file formats | HTML, JSON | See Anthropic’s current data-export instructions |
+| Includes uploaded attachments | ⚠️ References only (attachments not bundled) | See Anthropic’s current data-export instructions |
+| Includes artifacts / canvas documents | ⚠️ As HTML text, no live render | See Anthropic’s current data-export instructions |
 | Preserves markdown formatting | Partial | N/A |
 | Works for Projects / GPTs | ✅ Yes | N/A |
 
