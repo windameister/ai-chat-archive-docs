@@ -19,8 +19,8 @@ wants their conversations *out* of the web UI and *into* a file they own.
 | Native file formats | HTML, JSON | See Anthropic’s current data-export instructions |
 | Includes uploaded attachments | ⚠️ References only (attachments not bundled) | See Anthropic’s current data-export instructions |
 | Includes artifacts / canvas documents | ⚠️ As HTML text, no live render | See Anthropic’s current data-export instructions |
-| Preserves markdown formatting | Partial | N/A |
-| Works for Projects / GPTs | ✅ Yes | N/A |
+| Preserves markdown formatting | Partial | See Anthropic’s current data-export instructions |
+| Works for Projects / GPTs | ✅ Yes | See Anthropic’s current data-export instructions |
 
 ### ChatGPT's native export: the good and the bad
 
