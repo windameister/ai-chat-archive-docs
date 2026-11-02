@@ -655,8 +655,8 @@ Via Polar:
 
 ## Refund policy
 
-14-day refund window, no questions asked. Email <hello@aichatarchive.app>
-with your license key.
+14-day refund window, no questions asked. Email <support@aichatarchive.app>
+with your order ID (from the Polar purchase confirmation email).
 
 Refunded licenses are revoked; the extension checks revocation status when it
 validates the license. After revocation, the extension returns to free-tier
