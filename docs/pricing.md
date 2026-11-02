@@ -23,7 +23,7 @@ Unlocks everything. Pick the tier that matches how you use Claude:
 |---|---|---|
 | **Starter** | $3.99 / month | One month of full export, for a single cleanup or migration. |
 | **Pro (annual)** | $29.88 / year | Best value if you stay subscribed — works out to $2.49/month. |
-| **Lifetime** | ~~$39~~ **$19** (launch promo) | Pay once. Works forever, including all future features. |
+| **Lifetime** | $39 | Pay once. Keeps the feature set available on the day of purchase, forever. |
 
 ### What every paid plan includes
 
