@@ -29,13 +29,15 @@ conversations in one ZIP.
    the conversation transcripts.
 4. Wait while the extension retrieves the project files and conversations
    and builds the ZIP.
-5. Unzip the download and open the top-level `files/` folder. Start with
+5. Unzip the download, open the project-named folder, then open its `files/`
+   folder. Start with
    `files/_INDEX.md`, which lists the files included. On Beta Projects,
    Library folders keep their structure.
 
 Your choice of transcript format does not convert the files in `files/`, and
 you do not need the **Include attachments in the ZIP** option for project
-knowledge files — they are always part of Project Export. That option only
+knowledge files — Project Export always tries to download them, whatever that
+setting is. That option only
 adds available files attached to individual conversations.
 
 ## Are uploaded PDFs included?
