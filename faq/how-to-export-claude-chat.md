@@ -1,3 +1,7 @@
+---
+description: "How to export a Claude chat: compare copy-paste, print to PDF, API scripts and AI Chat Archive, then save clean PDF, Markdown, HTML, JSON or TXT files free."
+---
+
 # How to export a Claude.ai conversation
 
 Claude.ai does not currently offer a built-in way to export a conversation. This page

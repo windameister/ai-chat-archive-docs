@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive privacy: chats are processed in your browser with no analytics or telemetry. Paid license checks contact Polar with your key, not your chats."
+---
+
 # Privacy model
 
 AI Chat Archive is designed around one rule: **your conversation data never leaves

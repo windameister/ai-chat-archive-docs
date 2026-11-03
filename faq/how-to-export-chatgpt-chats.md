@@ -1,3 +1,7 @@
+---
+description: "How to export ChatGPT chats free to PDF, Markdown, HTML, JSON or TXT, with images in PDF and HTML, plus native export and Pro full-history batch ZIP downloads."
+---
+
 # How to export a ChatGPT conversation
 
 **Short answer:** to save a single ChatGPT conversation as a clean file (PDF, Markdown,

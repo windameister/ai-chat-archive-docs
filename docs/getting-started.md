@@ -1,3 +1,7 @@
+---
+description: "Install AI Chat Archive in two minutes and export your first Claude or ChatGPT conversation as PDF, Markdown or HTML. Free single-chat export, no daily cap."
+---
+
 # Getting started
 
 This page walks you through installing AI Chat Archive and running your first export.

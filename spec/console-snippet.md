@@ -1,3 +1,7 @@
+---
+description: "Claude export console snippets: free MIT-licensed JavaScript for downloading the current chat as Markdown or raw JSON in DevTools, no install needed."
+---
+
 # Console snippets — paste-into-DevTools export
 
 Two minimal, zero-install JavaScript snippets that download the conversation you're

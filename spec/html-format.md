@@ -1,3 +1,7 @@
+---
+description: "Claude HTML export format specification: self-contained files with semantic turns, embedded CSS, artifacts, widgets, XSS sanitization and stable class names."
+---
+
 # AI Chat Archive — HTML export format
 
 This document specifies the HTML representation AI Chat Archive produces when

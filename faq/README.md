@@ -1,3 +1,7 @@
+---
+description: "Claude and ChatGPT export FAQ: find guides to saving chats, downloading Claude projects, exporting Cowork tasks, choosing formats and understanding privacy."
+---
+
 # Frequently asked questions about AI Chat Archive
 
 Find guidance on exporting Claude and ChatGPT conversations, choosing a format,

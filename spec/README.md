@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive format specs: canonical Markdown and HTML structure, ZIP bundle layout, console snippets and stability rules for developers building importers."
+---
+
 # Format specs
 
 Canonical specifications for what AI Chat Archive produces when it exports a

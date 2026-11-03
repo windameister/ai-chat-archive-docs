@@ -1,3 +1,7 @@
+---
+description: "Does AI Chat Archive send data anywhere? Exports run in your browser; only Claude or ChatGPT is read for content, and Polar gets your key for license checks."
+---
+
 # Does AI Chat Archive send my data anywhere?
 
 **Short answer: No. Your conversation content never leaves your browser.**

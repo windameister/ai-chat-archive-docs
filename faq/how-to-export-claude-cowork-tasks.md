@@ -1,3 +1,7 @@
+---
+description: "How to export Claude Cowork tasks: save full transcripts with readable tool steps free to PDF, Markdown, HTML, JSON or TXT; Pro adds task output files in a ZIP."
+---
+
 # How to export a Claude Cowork task
 
 Claude's **Cowork** surface (the "Cowork" toggle next to "Chat", grouped
