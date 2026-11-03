@@ -1,3 +1,7 @@
+---
+description: "Claude vs ChatGPT export compared: account exports, single-chat options, formats, attachments and projects, plus when AI Chat Archive gives you cleaner files."
+---
+
 # Claude vs ChatGPT: which one is easier to export?
 
 **Short answer:** ChatGPT has a built-in bulk export (email-delivered ZIP of JSON and

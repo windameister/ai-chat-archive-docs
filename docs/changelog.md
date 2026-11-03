@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive changelog and release notes: Claude and ChatGPT export features, project and Cowork improvements, PDF fixes, and format stability updates."
+---
+
 # Changelog
 
 Release notes for AI Chat Archive. For a live feed of fixes between releases, see

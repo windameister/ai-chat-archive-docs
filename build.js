@@ -56,7 +56,7 @@ async function* walk(dir) {
 }
 
 const isSample = srcPath => srcPath.startsWith('examples/') && basename(srcPath) !== 'README.md';
-const DEFAULT_DESCRIPTION = 'Export Claude and ChatGPT chats to PDF, Markdown, HTML, JSON or TXT, and whole projects to ZIP. Free unlimited single-chat PDF. 100% local processing.';
+const DEFAULT_DESCRIPTION = 'Export Claude and ChatGPT chats to PDF, Markdown, HTML, JSON or TXT, and whole projects to ZIP. Single chats are free; full-history and project ZIP export are Pro.';
 const FAQ_DESCRIPTION = 'Find answers about exporting Claude and ChatGPT chats, Projects, Cowork tasks, artifacts, privacy, and choosing PDF, HTML or Markdown.';
 
 // Stable fragment IDs for documentation links (including duplicate headings).
@@ -68,7 +68,7 @@ marked.use({ renderer: { heading(text, level, raw) {
   return `<h${level} id="${escapeHtml(slug + (count ? `-${count}` : ''))}">${text}</h${level}>\n`;
 } } });
 
-const wrap = (title, body, currentPath, schema, srcPath) => {
+const wrap = (title, body, currentPath, schema, srcPath, description) => {
   const pageTitle = currentPath === '/'
     ? 'Claude & ChatGPT Chat and Project Export — AI Chat Archive Docs'
     : `${title} — AI Chat Archive Docs`;
@@ -89,7 +89,7 @@ const wrap = (title, body, currentPath, schema, srcPath) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(pageTitle)}</title>
-  <meta name="description" content="${escapeHtml(currentPath === '/faq/' ? FAQ_DESCRIPTION : DEFAULT_DESCRIPTION)}">
+  <meta name="description" content="${escapeHtml(description || (currentPath === '/faq/' ? FAQ_DESCRIPTION : DEFAULT_DESCRIPTION))}">
   ${isSample(srcPath) ? '<meta name="robots" content="noindex,follow">' : ''}
   <link rel="canonical" href="${BASE_URL}${currentPath}">
   ${schemaBlock}
@@ -362,9 +362,23 @@ function stripFrontMatter(md) {
   return md.slice(end + 5).replace(/^\n+/, '');
 }
 
+// Read the per-page `description:` from front matter (one line, plain or
+// JSON-quoted). Every published page sets its own so search snippets match
+// what people search for that page; DEFAULT_DESCRIPTION is only a fallback.
+function frontMatterDescription(md) {
+  if (!md.startsWith('---\n')) return '';
+  const end = md.indexOf('\n---\n', 4);
+  if (end === -1) return '';
+  const line = md.slice(4, end).split('\n').find(l => /^description:\s*/.test(l));
+  if (!line) return '';
+  const value = line.replace(/^description:\s*/, '').trim();
+  return value.startsWith('"') ? JSON.parse(value) : value;
+}
+
 async function buildOne(srcPath) {
   const fileRaw = await readFile(srcPath, 'utf8');
   const raw = stripFrontMatter(fileRaw);
+  const description = frontMatterDescription(fileRaw);
   const isIndex = srcPath === 'index.md';
   const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || basename(srcPath, '.md');
   const adjusted = rewriteLinks(raw, srcPath);
@@ -372,7 +386,7 @@ async function buildOne(srcPath) {
   const bodyHtml = marked.parse(adjusted, { gfm: true, breaks: false });
   const urlPath = urlPathFor(srcPath);
   const schema = buildSchema(srcPath, title, raw, urlPath);
-  const html = wrap(title, bodyHtml, urlPath, schema, srcPath);
+  const html = wrap(title, bodyHtml, urlPath, schema, srcPath, description);
 
   // Write raw markdown alongside HTML so LLMs can still fetch canonical .md
   const rawOut = join(OUT, srcPath);

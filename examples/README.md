@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive example exports: browse synthetic Markdown output with turn structure, timestamps and code blocks, and use sample files to test your importer."
+---
+
 # Example exports
 
 Real output from AI Chat Archive, committed verbatim. Browse these to see what the

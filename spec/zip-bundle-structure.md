@@ -1,3 +1,7 @@
+---
+description: "Claude export ZIP bundle structure: folder naming, transcript files, attachment paths, skipped-file reports and stability rules for parsing batch exports."
+---
+
 # AI Chat Archive — ZIP bundle structure
 
 When a user runs **bulk export** (a paid-tier feature) or exports a single conversation

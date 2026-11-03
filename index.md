@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive docs: export Claude and ChatGPT conversations to PDF, Markdown, HTML, JSON or TXT. Free single chats; paid batch and Claude project ZIPs."
+---
+
 # AI Chat Archive — Documentation
 
 **[AI Chat Archive](https://aichatarchive.app)** exports Claude.ai and ChatGPT

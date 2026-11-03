@@ -1,3 +1,7 @@
+---
+description: "Export Claude project as a ZIP with AI Chat Archive Pro: download instructions, knowledge files and chats. Choose Markdown, HTML, JSON or TXT, and troubleshoot."
+---
+
 # How to export a Claude.ai project
 
 Claude.ai groups related conversations into **Projects** — each with its

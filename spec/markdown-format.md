@@ -1,3 +1,7 @@
+---
+description: "Claude Markdown export specification: structure, timestamps, attachment references, artifacts, version history and stable headings for Obsidian and importers."
+---
+
 # AI Chat Archive — Markdown export format
 
 This document specifies the Markdown representation AI Chat Archive produces when

@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive pricing: single-chat export is free, including unlimited PDF. Paid plans from $3.99/mo, $29.88/yr or a $39 lifetime license, 14-day refunds."
+---
+
 # Pricing
 
 AI Chat Archive is free to try, paid to go beyond single-conversation exports.

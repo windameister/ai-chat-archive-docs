@@ -1,3 +1,7 @@
+---
+description: "PDF vs HTML vs Markdown: compare sharing, offline reading, editing, attachments and file size to choose the best export format for Claude and ChatGPT chats."
+---
+
 # PDF vs HTML vs Markdown — which export format should I pick?
 
 **Quick answer:**

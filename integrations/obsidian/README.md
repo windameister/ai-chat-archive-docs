@@ -1,3 +1,7 @@
+---
+description: "Export Claude to Obsidian: import Markdown chats to a vault, add metadata and backlinks, build a Dataview index, and keep paid ZIP attachments alongside notes."
+---
+
 # Using AI Chat Archive exports in Obsidian
 
 This guide shows how to take a Markdown export from AI Chat Archive and turn it into a

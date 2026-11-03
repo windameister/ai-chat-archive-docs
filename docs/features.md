@@ -1,3 +1,7 @@
+---
+description: "AI Chat Archive features: export Claude and ChatGPT chats free to PDF, Markdown, HTML, JSON or TXT; Pro adds full-history batch export and Claude project ZIPs."
+---
+
 # Features
 
 AI Chat Archive is a Chrome extension that exports Claude.ai conversations. This page
