@@ -49,8 +49,10 @@ one selected chat or project as a file. For individual files, your options are:
 
 1. Copy-paste manually (loses formatting, attachments, artifacts).
 2. Use a third-party extension like AI Chat Archive.
-3. Call the Anthropic API to re-fetch your conversations (requires a developer
-   account and code to glue it together).
+3. Process the downloaded official account export (the raw JSON from Settings →
+   Privacy → Export data) with your own scripts, or use a
+   [session-authenticated console snippet](../spec/console-snippet.md) that calls
+   Claude's own API with your existing login.
 
 ## Third-party tools
 
@@ -74,14 +76,18 @@ A handful of browser extensions and scripts provide Claude conversation export.
 - **Best for**: One-off use with a single short conversation.
 - **Limitations**: Loses attachments, artifacts, and most formatting. Doesn't scale.
 
-### Anthropic API + a custom script
+### Official account export or a console snippet
 
-- **What it does**: Use your Claude API key to fetch conversation history
-  programmatically.
-- **Price**: API usage costs (fractions of a cent per request).
-- **Best for**: Developers who want complete programmatic control.
-- **Limitations**: Requires code. The API returns raw JSON; rendering to
-  PDF / HTML / Markdown is on you.
+- **What it does**: Process the raw JSON from the official account export
+  (Settings → Privacy → Export data), or paste a session-authenticated snippet into
+  DevTools that calls Claude's own API with your existing login and downloads the open
+  chat.
+- **Price**: Free.
+- **Best for**: Developers comfortable with scripts, or machines where you can't
+  install an extension.
+- **Limitations**: The console snippet covers single conversations as Markdown or raw
+  JSON only — no attachment binaries and no rendered PDF/HTML. Guide and script:
+  [Console snippets](../spec/console-snippet.md).
 
 ## Which is easier in practice?
 

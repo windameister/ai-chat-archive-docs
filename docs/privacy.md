@@ -37,9 +37,11 @@ just promised.
 ```
 
 There is no AI Chat Archive server, proxy, or analytics pipeline in this diagram.
-Paid exports that include attachments or images make one additional kind of request:
-the provider returns temporary signed download URLs on its own storage/CDN hosts, and
-the extension fetches those bytes directly (see below).
+Exports that include attachments or images — including free single-chat exports with
+images embedded in the HTML or PDF — also fetch the file and image bytes. Claude serves
+those bytes from its own API/asset endpoints using your existing session; ChatGPT may
+additionally return temporary signed download URLs on storage/CDN hosts, which the
+extension fetches without credentials (see below).
 
 ### While activating a paid license
 
@@ -70,10 +72,12 @@ The declared `host_permissions` name the three origins the extension is granted
 *privileged* cross-origin access to: the two chat APIs and Polar. They are not a list
 of every host the extension can contact, and they are not a firewall: a content script
 can make the same ordinary cross-origin requests a web page can when the target allows
-CORS. The extension relies on this for one thing — paid exports fetch attachments and
-embedded images from temporary signed download URLs on the providers' own storage/CDN
-hosts; the URL host is chosen by the provider (Claude or ChatGPT) and can vary per
-file. What the architecture does rule out is any AI Chat Archive server in the data
+CORS. The extension relies on this for exports that include attachments or embedded images —
+free inlined images included — which fetch their bytes from the providers' own
+API/asset endpoints using the existing session. ChatGPT's flow may also hand back
+temporary signed download URLs on storage/CDN hosts it chooses; those are fetched
+without credentials, because the signature already authorizes them, and the host can
+vary per file. What the architecture does rule out is any AI Chat Archive server in the data
 path: there is no host of ours that could receive your conversations, and no
 permission is requested that points at one. Files reach your Downloads folder through
 the normal browser print dialog and download flow, which need no special permission.
@@ -116,8 +120,9 @@ store your conversations anywhere outside your browser.
 
 - Open Chrome DevTools → **Network** tab before clicking Export.
 - Every request is visible. During an export you will see calls to `claude.ai` or
-  `chatgpt.com`, plus fetches of the provider-signed attachment/image URLs described
-  above when the export includes those; a round-trip to `api.polar.sh` happens only
+  `chatgpt.com`, plus attachment/image byte fetches from the provider's own API/asset
+  endpoints — and, for ChatGPT, credential-free fetches of the signed URLs described
+  above — when the export includes those; a round-trip to `api.polar.sh` happens only
   when a license is activated or revalidated (the result is cached for a week, so
   this is not per export).
 - Open the extension's `manifest.json` (via `chrome://extensions` → **Details** →

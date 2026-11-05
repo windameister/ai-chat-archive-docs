@@ -18,7 +18,7 @@ Markdown locally, and writes the file to your Downloads folder. There is no
 | Step | Where it happens | What is sent where |
 |---|---|---|
 | Read conversation | Your browser → `claude.ai` / `chatgpt.com` | The same API call the site itself makes when you open a chat. No third parties involved. |
-| Download attachments (paid, optional) | Your browser → the provider's attachment/image CDN | Binary fetch of files in the conversation. Goes to your machine only. |
+| Download attachments / embed images | Your browser → the provider's API/asset endpoints (ChatGPT: possibly signed storage/CDN URLs too) | Binary fetch of files and images in the conversation; happens in free image-embedded exports too. Goes to your machine only. |
 | Render Markdown / HTML / PDF | Your browser, locally | Nothing is sent during this step. |
 | Save the output | Browser print dialog / file download | File is written to disk on your machine. |
 
@@ -30,12 +30,15 @@ Three categories of traffic:
    the conversations being exported from the same origins you're already logged into,
    reusing your existing cookies: `claude.ai` for Claude chats and `chatgpt.com` when
    you export a ChatGPT conversation.
-2. **Provider-supplied file and image download hosts.** When an export includes
-   attachments or embedded images, the provider's API returns temporary signed
-   download URLs on its own storage/CDN infrastructure (for example, a pre-signed URL
-   on a storage host). The extension fetches those bytes directly from that host. The
-   host is chosen by Claude or ChatGPT and can vary per file; the bytes come to your
-   machine, never to us.
+2. **Provider file and image downloads.** When an export includes attachments or
+   embedded images — this includes free single-chat exports with images embedded in
+   the HTML or PDF — the extension fetches the file and image bytes too. With Claude
+   they come from Claude's own API/asset endpoints, using the same existing session as
+   every other Claude request. ChatGPT works the same way against its own API and may
+   additionally return temporary signed download URLs on storage/CDN infrastructure,
+   which the extension fetches without credentials because the signature authorizes
+   them. Either way the host is chosen by the provider and can vary per file; the bytes
+   come to your machine, never to us.
 3. **`api.polar.sh`** — *only* when you activate, renew, or periodically revalidate a
    paid license. The extension sends your license key to Polar (our payment provider)
    to verify it. It never sends your conversations.
@@ -47,14 +50,16 @@ operated by AI Chat Archive appears anywhere in these flows.
 
 - Open Chrome DevTools → Network tab before clicking Export.
 - Watch every request. You will see calls to `claude.ai` or `chatgpt.com` (to read the
-  chat), fetches of the provider-signed file and image URLs above when the export
+  chat), attachment/image byte fetches from the provider's own API/asset endpoints —
+  and, for ChatGPT, credential-free fetches of the signed URLs above — when the export
   includes attachments or images, and a request to `api.polar.sh` when a license is
   activated or revalidated.
 - The extension's manifest declares `host_permissions` for `claude.ai`, `chatgpt.com`
   and `api.polar.sh` only. Those permissions grant privileged cross-origin access to
   just those three origins; they are not a complete list of reachable hosts and not a
   firewall — content scripts can still make ordinary requests the target site permits
-  via CORS, which is how the signed downloads above work. What the architecture rules
+  via CORS, which is how the file and image downloads above reach provider-chosen hosts,
+  including ChatGPT's credential-free signed URLs. What the architecture rules
   out is a server of ours receiving your chats: there is no AI Chat Archive host in
   the data path at all.
 
