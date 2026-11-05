@@ -1,10 +1,11 @@
 ---
+title: "Download Files from a Claude Project — AI Chat Archive Docs"
 description: "Download Claude project files with AI Chat Archive Pro: save knowledge files and available PDFs or images in a ZIP, with instructions and conversations."
 ---
 
 # How to download files from a Claude project
 
-**Short answer:** Run AI Chat Archive's Project Export and open the `files/`
+**Short answer:** Run AI Chat Archive's [Project Export](https://aichatarchive.app/claude-project-download) and open the `files/`
 folder in the ZIP. Text knowledge documents are saved as Markdown, and
 uploaded files such as PDFs and images are saved as files alongside them when
 they can be downloaded. Project Export is a paid feature; single-chat export

@@ -1,4 +1,5 @@
 ---
+title: "PDF vs HTML vs Markdown: Which One? — AI Chat Archive Docs"
 description: "PDF vs HTML vs Markdown: compare sharing, offline reading, editing, attachments and file size to choose the best export format for Claude and ChatGPT chats."
 ---
 

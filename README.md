@@ -1,8 +1,8 @@
 # AI Chat Archive — Documentation
 
 **[AI Chat Archive](https://aichatarchive.app)** exports [Claude.ai](https://claude.ai)
-and ChatGPT conversations to **PDF, Markdown, HTML, JSON or TXT**, with **100% local
-processing**. Single-conversation PDF export is free and unlimited, with no daily
+and ChatGPT conversations to **PDF, Markdown, HTML, JSON or TXT**, with **browser-based export
+processing** (license checks send Polar only your key, never chat content). Single-conversation PDF export is free and unlimited, with no daily
 cap. A paid license unlocks whole-project ZIP exports, batch export and attachment
 bundling. Your conversations are never uploaded to AI Chat Archive servers.
 

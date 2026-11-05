@@ -1,4 +1,5 @@
 ---
+title: "Does It Work with Claude Projects? — AI Chat Archive Docs"
 description: "Does AI Chat Archive work with Claude Projects? Yes: Pro exports instructions, files and chats as one ZIP in Markdown, HTML, JSON or TXT; single chats are free."
 ---
 

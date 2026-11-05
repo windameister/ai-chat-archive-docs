@@ -1,4 +1,5 @@
 ---
+title: "Console Snippets: DevTools Export — AI Chat Archive Docs"
 description: "Claude export console snippets: free MIT-licensed JavaScript for downloading the current chat as Markdown or raw JSON in DevTools, no install needed."
 ---
 

@@ -6,8 +6,7 @@ description: "How to export ChatGPT chats free to PDF, Markdown, HTML, JSON or T
 
 **Short answer:** to save a single ChatGPT conversation as a clean file (PDF, Markdown,
 HTML, JSON, or TXT), install the [AI Chat Archive](https://aichatarchive.app/chatgpt-exporter)
-browser extension, open the chat, and click Export. It runs entirely in your browser —
-nothing is uploaded — and PDF export is free with no daily cap. ChatGPT's own built-in
+browser extension, open the chat, and click Export. Export processing runs in your browser, and chat content is not uploaded to our servers. License checks send Polar only your key, never chat content. PDF export is free with no daily cap. ChatGPT's own built-in
 export is bulk-only (an email-delivered ZIP) and awkward for a single chat.
 
 This page compares every practical option.
@@ -33,8 +32,8 @@ A browser extension that adds an Export button to `chatgpt.com`.
   ChatGPT Project and on chats with a custom GPT, not just plain chats.
 - **Clean transcript** — code blocks, tables, and CJK (Chinese/Japanese/Korean) text render
   correctly; browsing/tool scaffolding and citation markers are stripped.
-- **100% local** — the extension reads the conversation from `chatgpt.com` using your
-  existing session and writes the file locally. No account, no upload, no telemetry.
+- **Browser-based processing** — the extension reads the conversation from `chatgpt.com` using your
+  existing session and writes the file locally. No account, no chat uploads to our servers, no telemetry. License checks send Polar only your key, never chat content.
 
 **Paid features** (one-time license): **batch export** of your entire ChatGPT history as a
 single ZIP, and **attachment bundling** — the original uploaded files, at full quality, in

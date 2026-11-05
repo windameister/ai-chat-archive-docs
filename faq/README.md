@@ -1,4 +1,5 @@
 ---
+title: "Export FAQ for Claude & ChatGPT — AI Chat Archive Docs"
 description: "Claude and ChatGPT export FAQ: find guides to saving chats, downloading Claude projects, exporting Cowork tasks, choosing formats and understanding privacy."
 ---
 

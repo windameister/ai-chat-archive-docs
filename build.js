@@ -68,10 +68,12 @@ marked.use({ renderer: { heading(text, level, raw) {
   return `<h${level} id="${escapeHtml(slug + (count ? `-${count}` : ''))}">${text}</h${level}>\n`;
 } } });
 
-const wrap = (title, body, currentPath, schema, srcPath, description) => {
-  const pageTitle = currentPath === '/'
+const wrap = (title, body, currentPath, schema, srcPath, description, seoTitle) => {
+  // A front-matter `title:` is the full <title> for search results; the H1
+  // (and schema name) still comes from the page's first heading.
+  const pageTitle = seoTitle || (currentPath === '/'
     ? 'Claude & ChatGPT Chat and Project Export — AI Chat Archive Docs'
-    : `${title} — AI Chat Archive Docs`;
+    : `${title} — AI Chat Archive Docs`);
   // Build a "..back to home" crumb only when not at root
   const crumb = currentPath === '/' ? '' :
     `<nav class="crumbs"><a href="/">← AI Chat Archive Docs</a></nav>`;
@@ -365,20 +367,25 @@ function stripFrontMatter(md) {
 // Read the per-page `description:` from front matter (one line, plain or
 // JSON-quoted). Every published page sets its own so search snippets match
 // what people search for that page; DEFAULT_DESCRIPTION is only a fallback.
-function frontMatterDescription(md) {
+function frontMatterField(md, key) {
   if (!md.startsWith('---\n')) return '';
   const end = md.indexOf('\n---\n', 4);
   if (end === -1) return '';
-  const line = md.slice(4, end).split('\n').find(l => /^description:\s*/.test(l));
+  const prefix = new RegExp(`^${key}:\\s*`);
+  const line = md.slice(4, end).split('\n').find(l => prefix.test(l));
   if (!line) return '';
-  const value = line.replace(/^description:\s*/, '').trim();
+  const value = line.replace(prefix, '').trim();
   return value.startsWith('"') ? JSON.parse(value) : value;
 }
+const frontMatterDescription = md => frontMatterField(md, 'description');
+// Optional `title:` overrides the generated <title> (keep it ≤ 65 characters).
+const frontMatterTitle = md => frontMatterField(md, 'title');
 
 async function buildOne(srcPath) {
   const fileRaw = await readFile(srcPath, 'utf8');
   const raw = stripFrontMatter(fileRaw);
   const description = frontMatterDescription(fileRaw);
+  const seoTitle = frontMatterTitle(fileRaw);
   const isIndex = srcPath === 'index.md';
   const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || basename(srcPath, '.md');
   const adjusted = rewriteLinks(raw, srcPath);
@@ -386,7 +393,7 @@ async function buildOne(srcPath) {
   const bodyHtml = marked.parse(adjusted, { gfm: true, breaks: false });
   const urlPath = urlPathFor(srcPath);
   const schema = buildSchema(srcPath, title, raw, urlPath);
-  const html = wrap(title, bodyHtml, urlPath, schema, srcPath, description);
+  const html = wrap(title, bodyHtml, urlPath, schema, srcPath, description, seoTitle);
 
   // Write raw markdown alongside HTML so LLMs can still fetch canonical .md
   const rawOut = join(OUT, srcPath);

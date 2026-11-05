@@ -110,7 +110,9 @@ Versions follow Chrome's required numeric format (no semver suffixes).
 - Clean transcript: code blocks, tables, and CJK text render correctly;
   browsing/tool scaffolding and citation markers are stripped.
 - 100% local — reads `chatgpt.com` over your existing session. No account,
-  no upload, no telemetry.
+  no upload, no telemetry. (Later clarified: export processing is local and
+  chat content is not uploaded to our servers; license checks contact Polar
+  with the key only.)
 
 ## v0.3.8 — July 2026 — Export Cowork tasks
 
@@ -485,8 +487,8 @@ See [pricing.md](/docs/pricing/) for tier prices.
 
 ## Privacy-first architecture
 
-- Runs entirely in your browser. No AI Chat Archive server. No proxy.
-- Declares only 3 `host_permissions`: `claude.ai`, `aichatarchive.app`, `api.polar.sh`.
+- Export processing runs in your browser. No AI Chat Archive server handles chat content. No proxy. License checks send Polar only your key, never chat content.
+- Declares 3 `host_permissions`: `claude.ai`, `chatgpt.com`, `api.polar.sh`.
 - License activation sends **only the license key** to Polar (payment provider).
   Never sends conversation data.
 - No analytics, no telemetry, no "phone home".
@@ -497,8 +499,8 @@ Full details in [privacy.md](/docs/privacy/).
 
 - **Chrome** (primary target).
 - **Chromium-based browsers**: Edge, Brave, Arc, Opera, Vivaldi. All supported.
-- **Firefox**: not supported.
-- **Safari**: not supported.
+- **Firefox**: supported.
+- **Safari**: supported on macOS (macOS only).
 
 ## What it *doesn't* do (and won't)
 
@@ -537,13 +539,14 @@ It takes about two minutes.
 3. When prompted, approve the permissions (see [Privacy](/docs/privacy/) for what each
    permission does).
 
-The extension works in any Chromium-based browser: Chrome, Edge, Brave, Arc, Opera.
-Firefox is not currently supported.
+The extension works in Chrome and any Chromium-based browser (Edge, Brave, Arc,
+Opera, Vivaldi), as well as Firefox and Safari (Safari on macOS only).
 
 ## 2. Open a Claude.ai conversation
 
-Navigate to any conversation at <https://claude.ai>. The extension lights up only on
-`claude.ai` pages — it cannot see anything else.
+Navigate to any conversation at <https://claude.ai> (the extension also works on
+`chatgpt.com`). It lights up only on those two sites' pages — it cannot see anything
+else.
 
 ## 3. Click the extension icon
 
@@ -689,8 +692,7 @@ FILE: docs/privacy.md
 
 # Privacy model
 
-AI Chat Archive is designed around one rule: **your conversation data never leaves
-your browser**.
+AI Chat Archive is designed around one rule: **your conversation data is processed in your browser and never uploaded to our servers**. License checks send Polar only your key, never chat content.
 
 This page is the technical overview. For the question "does it send my data anywhere?"
 answered in plain English, see
@@ -722,7 +724,12 @@ just promised.
 └──────────────────────┘                                └────────────────┘
 ```
 
-There is no fourth box. No AI Chat Archive server, no proxy, no analytics pipeline.
+There is no AI Chat Archive server, proxy, or analytics pipeline in this diagram.
+Exports that include attachments or images — including free single-chat exports with
+images embedded in the HTML or PDF — also fetch the file and image bytes. Claude serves
+those bytes from its own API/asset endpoints using your existing session; ChatGPT may
+additionally return temporary signed download URLs on storage/CDN hosts, which the
+extension fetches without credentials (see below).
 
 ### While activating a paid license
 
@@ -743,32 +750,69 @@ Chrome enforces the permissions declared in `manifest.json`. AI Chat Archive dec
 
 | Permission | Why it's needed |
 |---|---|
-| `host_permissions: ["https://claude.ai/*"]` | Read conversations and attachments via the same API Claude.ai's own web app uses. |
-| `host_permissions: ["https://api.polar.sh/*"]` | Validate paid license keys. |
-| `downloads` | Write exported files into the Downloads folder. |
-| `storage` | Remember user settings (format preference, timestamp style, license key). |
+| `host_permissions: ["https://claude.ai/*"]` | Read Claude conversations and attachments via the same API Claude.ai's own web app uses. |
+| `host_permissions: ["https://chatgpt.com/*"]` | Read ChatGPT conversations the same way when you export from ChatGPT. |
+| `host_permissions: ["https://api.polar.sh/*"]` | Validate paid license keys and periodically revalidate them. |
+| `storage` | Keep settings and license state (`chrome.storage.sync`) plus temporary local export data (`chrome.storage.local`). |
+| `unlimitedStorage` | Hold large PDF hand-off payloads (base64 images included) in local storage while an export renders. |
 
-The extension cannot reach any host not on this list. If the extension tried to POST
-your conversation to a third-party server, Chrome would block the request — the
-manifest is the ceiling of what it can do.
+The declared `host_permissions` name the three origins the extension is granted
+*privileged* cross-origin access to: the two chat APIs and Polar. They are not a list
+of every host the extension can contact, and they are not a firewall: a content script
+can make the same ordinary cross-origin requests a web page can when the target allows
+CORS. The extension relies on this for exports that include attachments or embedded images —
+free inlined images included — which fetch their bytes from the providers' own
+API/asset endpoints using the existing session. ChatGPT's flow may also hand back
+temporary signed download URLs on storage/CDN hosts it chooses; those are fetched
+without credentials, because the signature already authorizes them, and the host can
+vary per file. What the architecture does rule out is any AI Chat Archive server in the data
+path: there is no host of ours that could receive your conversations, and no
+permission is requested that points at one. Files reach your Downloads folder through
+the normal browser print dialog and download flow, which need no special permission.
 
-## Local storage
+## Storage on your device
 
-The extension stores only the following in Chrome's `chrome.storage.local`:
+Two different browser storage areas are used, and the distinction matters:
 
-- Your format preferences (PDF / HTML / Markdown).
-- Your timestamp style.
-- Your license key, if activated.
+**`chrome.storage.sync` — settings and license state**
 
-Never stored: conversation content, attachment bytes, or any identifier tied to your
-Claude account.
+- Your settings: format and theme preferences, timestamp style, and similar options.
+- Your license key and its last validation result, if you have activated a key.
+
+If you are signed into Chrome, Google synchronizes this data across devices via your
+Google account; we never have access to it. (In the Safari App Store build, the Apple
+in-app-purchase entitlement is kept in local storage instead, because it is tied to
+that Mac.)
+
+**`chrome.storage.local` — temporary export data**
+
+- **PDF hand-off payloads.** For a PDF export, the full conversation (including images
+  embedded as base64) is passed from the chat tab to the extension's print page
+  through a local storage key. The print page removes that key as soon as it has
+  received the payload, before rendering. Closing the print page instead asks the
+  source tab to cancel; it does not delete the key. A payload abandoned mid-export
+  (for example, by a closed tab) becomes eligible for cleanup after 15 minutes without
+  activity and is swept the next time a PDF export starts.
+- **Export-resume checkpoints.** Long batch and project exports record progress so an
+  interrupted run can resume instead of starting over. The checkpoint is cleared when
+  the export finishes. A checkpoint older than two weeks is removed the next time that
+  export scope is checked for resumable progress; there is no background timer, so an
+  export you never open again can leave its checkpoint beyond two weeks.
+
+These local copies never leave your device. The privacy guarantee is about *network
+upload*, not about storage: conversation content temporarily lives in the browser's
+own storage while an export is built, and is never uploaded to our servers. We do not
+store your conversations anywhere outside your browser.
 
 ## How to verify
 
 - Open Chrome DevTools → **Network** tab before clicking Export.
-- Every request is visible. You will see only `claude.ai` traffic during a conversation
-  export, and — if applicable — a single round-trip to `api.polar.sh` during license
-  activation.
+- Every request is visible. During an export you will see calls to `claude.ai` or
+  `chatgpt.com`, plus attachment/image byte fetches from the provider's own API/asset
+  endpoints — and, for ChatGPT, credential-free fetches of the signed URLs described
+  above — when the export includes those; a round-trip to `api.polar.sh` happens only
+  when a license is activated or revalidated (the result is cached for a week, so
+  this is not per export).
 - Open the extension's `manifest.json` (via `chrome://extensions` → **Details** →
   **Inspect views: service worker** → the Sources tab). The declared permissions are
   authoritative.
@@ -777,8 +821,7 @@ Claude account.
 
 - If Claude.ai is down, export is down. There is no cached copy of your data
   anywhere outside your browser.
-- If you uninstall the extension, every byte it ever handled is gone — because
-  nothing was ever persisted.
+- Uninstalling the extension does not remove files you already exported; those remain in your downloads folder. Chat content is not uploaded to our servers, and license checks send Polar only your key, never chat content.
 - If AI Chat Archive, Inc. ceases operations tomorrow, your already-exported files
   keep working forever. They are plain PDF / HTML / Markdown on your disk with no
   DRM and no phone-home.
@@ -1018,8 +1061,10 @@ one selected chat or project as a file. For individual files, your options are:
 
 1. Copy-paste manually (loses formatting, attachments, artifacts).
 2. Use a third-party extension like AI Chat Archive.
-3. Call the Anthropic API to re-fetch your conversations (requires a developer
-   account and code to glue it together).
+3. Process the downloaded official account export (the raw JSON from Settings →
+   Privacy → Export data) with your own scripts, or use a
+   [session-authenticated console snippet](/spec/console-snippet/) that calls
+   Claude's own API with your existing login.
 
 ## Third-party tools
 
@@ -1029,7 +1074,7 @@ A handful of browser extensions and scripts provide Claude conversation export.
 
 - **What it does**: Export any Claude **or ChatGPT** conversation to PDF, HTML,
   Markdown, JSON, or plain text. Bulk-export the entire account to a ZIP with attachments.
-- **Where it runs**: Entirely in your browser (local). Nothing uploaded anywhere.
+- **Where it runs**: Export processing runs in your browser; chat content is not uploaded to our servers. License checks send Polar only your key, never chat content.
 - **Price**: Free for single-conversation export in all five formats, with
   **unlimited free PDF** (no daily cap) and images embedded in the HTML/PDF. A
   **$39 lifetime** license adds batch export of the whole account, attachment
@@ -1043,14 +1088,18 @@ A handful of browser extensions and scripts provide Claude conversation export.
 - **Best for**: One-off use with a single short conversation.
 - **Limitations**: Loses attachments, artifacts, and most formatting. Doesn't scale.
 
-### Anthropic API + a custom script
+### Official account export or a console snippet
 
-- **What it does**: Use your Claude API key to fetch conversation history
-  programmatically.
-- **Price**: API usage costs (fractions of a cent per request).
-- **Best for**: Developers who want complete programmatic control.
-- **Limitations**: Requires code. The API returns raw JSON; rendering to
-  PDF / HTML / Markdown is on you.
+- **What it does**: Process the raw JSON from the official account export
+  (Settings → Privacy → Export data), or paste a session-authenticated snippet into
+  DevTools that calls Claude's own API with your existing login and downloads the open
+  chat.
+- **Price**: Free.
+- **Best for**: Developers comfortable with scripts, or machines where you can't
+  install an extension.
+- **Limitations**: The console snippet covers single conversations as Markdown or raw
+  JSON only — no attachment binaries and no rendered PDF/HTML. Guide and script:
+  [Console snippets](/spec/console-snippet/).
 
 ## Which is easier in practice?
 
@@ -1098,46 +1147,63 @@ FILE: faq/does-it-send-data-anywhere.md
 
 # Does AI Chat Archive send my data anywhere?
 
-**Short answer: No. Your conversation content never leaves your browser.**
+**Short answer: chat content is processed in your browser and is not uploaded to our servers.** License checks send Polar only your key, never chat content.
 
 AI Chat Archive is a client-side Chrome extension. When you click **Export**, the
-extension reads your conversation directly from Claude.ai through the same authenticated
-session your browser is already using, renders it into PDF / HTML / Markdown locally,
-and writes the file to your Downloads folder. There is no "AI Chat Archive server" in
-the middle.
+extension reads your conversation directly from Claude.ai (or chatgpt.com) through the
+same authenticated session your browser is already using, renders it into PDF / HTML /
+Markdown locally, and writes the file to your Downloads folder. There is no
+"AI Chat Archive server" in the middle.
 
 ## What the extension does with your data
 
 | Step | Where it happens | What is sent where |
 |---|---|---|
-| Read conversation | Your browser → `claude.ai` | The same API call Claude.ai makes itself when you open a chat. No third parties involved. |
-| Download attachments (paid, optional) | Your browser → `claude.ai`'s attachment CDN | Binary fetch of files you already uploaded. Goes to your machine only. |
-| Render Markdown / HTML / PDF | Your browser, locally | Nothing is sent anywhere. |
-| Save the output | Browser Downloads API | File is written to disk on your machine. |
+| Read conversation | Your browser → `claude.ai` / `chatgpt.com` | The same API call the site itself makes when you open a chat. No third parties involved. |
+| Download attachments / embed images | Your browser → the provider's API/asset endpoints (ChatGPT: possibly signed storage/CDN URLs too) | Binary fetch of files and images in the conversation; happens in free image-embedded exports too. Goes to your machine only. |
+| Render Markdown / HTML / PDF | Your browser, locally | Nothing is sent during this step. |
+| Save the output | Browser print dialog / file download | File is written to disk on your machine. |
 
 ## What the extension *does* talk to over the network
 
-Two things, and only two:
+Three categories of traffic:
 
-1. **`claude.ai`** — to fetch the conversation and attachments being exported. This is
-   the same origin you're already logged into; the extension reuses your existing
-   cookies.
-2. **`api.polar.sh`** — *only* when you activate or renew a paid license. The extension
-   sends your license key to Polar (our payment provider) to verify it. It never sends
-   your conversations.
+1. **The chat providers' APIs — `claude.ai` and `chatgpt.com`.** The extension fetches
+   the conversations being exported from the same origins you're already logged into,
+   reusing your existing cookies: `claude.ai` for Claude chats and `chatgpt.com` when
+   you export a ChatGPT conversation.
+2. **Provider file and image downloads.** When an export includes attachments or
+   embedded images — this includes free single-chat exports with images embedded in
+   the HTML or PDF — the extension fetches the file and image bytes too. With Claude
+   they come from Claude's own API/asset endpoints, using the same existing session as
+   every other Claude request. ChatGPT works the same way against its own API and may
+   additionally return temporary signed download URLs on storage/CDN infrastructure,
+   which the extension fetches without credentials because the signature authorizes
+   them. Either way the host is chosen by the provider and can vary per file; the bytes
+   come to your machine, never to us.
+3. **`api.polar.sh`** — *only* when you activate, renew, or periodically revalidate a
+   paid license. The extension sends your license key to Polar (our payment provider)
+   to verify it. It never sends your conversations.
 
-No analytics, no telemetry, no crash reports, no "phone-home" pings. If you run the
-extension with your browser's network tab open, you will see exactly these requests and
-nothing else.
+No analytics, no telemetry, no crash reports, no "phone-home" pings, and no server
+operated by AI Chat Archive appears anywhere in these flows.
 
 ## How you can verify this yourself
 
 - Open Chrome DevTools → Network tab before clicking Export.
-- Watch every request. You will see calls to `claude.ai` (to read the chat) and
-  nothing else.
-- The extension's manifest declares `host_permissions` for `claude.ai` and `polar.sh`
-  only. Chrome enforces these — the extension cannot reach any other host even if the
-  code tried to.
+- Watch every request. You will see calls to `claude.ai` or `chatgpt.com` (to read the
+  chat), attachment/image byte fetches from the provider's own API/asset endpoints —
+  and, for ChatGPT, credential-free fetches of the signed URLs above — when the export
+  includes attachments or images, and a request to `api.polar.sh` when a license is
+  activated or revalidated.
+- The extension's manifest declares `host_permissions` for `claude.ai`, `chatgpt.com`
+  and `api.polar.sh` only. Those permissions grant privileged cross-origin access to
+  just those three origins; they are not a complete list of reachable hosts and not a
+  firewall — content scripts can still make ordinary requests the target site permits
+  via CORS, which is how the file and image downloads above reach provider-chosen hosts,
+  including ChatGPT's credential-free signed URLs. What the architecture rules
+  out is a server of ours receiving your chats: there is no AI Chat Archive host in
+  the data path at all.
 
 ## Why this matters
 
@@ -1149,8 +1215,7 @@ which means:
 - A breach at that vendor exposes your chats.
 
 AI Chat Archive exists specifically so this doesn't happen. The extension is designed
-around one rule: **if the data would have to leave your machine, the feature doesn't
-ship.** PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
+around one rule: **export processing happens in your browser, without uploading chat content to our servers.** License checks send Polar only your key, never chat content. PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
 implemented client-side so the data path stays local.
 
 ## Related
@@ -1420,7 +1485,7 @@ FILE: faq/how-to-download-files-from-claude-project.md
 
 # How to download files from a Claude project
 
-**Short answer:** Run AI Chat Archive's Project Export and open the `files/`
+**Short answer:** Run AI Chat Archive's [Project Export](https://aichatarchive.app/claude-project-download) and open the `files/`
 folder in the ZIP. Text knowledge documents are saved as Markdown, and
 uploaded files such as PDFs and images are saved as files alongside them when
 they can be downloaded. Project Export is a paid feature; single-chat export
@@ -1503,8 +1568,7 @@ FILE: faq/how-to-export-chatgpt-chats.md
 
 **Short answer:** to save a single ChatGPT conversation as a clean file (PDF, Markdown,
 HTML, JSON, or TXT), install the [AI Chat Archive](https://aichatarchive.app/chatgpt-exporter)
-browser extension, open the chat, and click Export. It runs entirely in your browser —
-nothing is uploaded — and PDF export is free with no daily cap. ChatGPT's own built-in
+browser extension, open the chat, and click Export. Export processing runs in your browser, and chat content is not uploaded to our servers. License checks send Polar only your key, never chat content. PDF export is free with no daily cap. ChatGPT's own built-in
 export is bulk-only (an email-delivered ZIP) and awkward for a single chat.
 
 This page compares every practical option.
@@ -1530,8 +1594,8 @@ A browser extension that adds an Export button to `chatgpt.com`.
   ChatGPT Project and on chats with a custom GPT, not just plain chats.
 - **Clean transcript** — code blocks, tables, and CJK (Chinese/Japanese/Korean) text render
   correctly; browsing/tool scaffolding and citation markers are stripped.
-- **100% local** — the extension reads the conversation from `chatgpt.com` using your
-  existing session and writes the file locally. No account, no upload, no telemetry.
+- **Browser-based processing** — the extension reads the conversation from `chatgpt.com` using your
+  existing session and writes the file locally. No account, no chat uploads to our servers, no telemetry. License checks send Polar only your key, never chat content.
 
 **Paid features** (one-time license): **batch export** of your entire ChatGPT history as a
 single ZIP, and **attachment bundling** — the original uploaded files, at full quality, in
@@ -2057,7 +2121,7 @@ FILE: index.md
 # AI Chat Archive — Documentation
 
 **[AI Chat Archive](https://aichatarchive.app)** exports Claude.ai and ChatGPT
-conversations to **PDF, Markdown, HTML, JSON or TXT**, with **100% local processing**.
+conversations to **PDF, Markdown, HTML, JSON or TXT**, with **browser-based export processing** (license checks send Polar only your key, never chat content).
 Single-conversation PDF export is free and unlimited, with no daily cap. A paid
 license unlocks whole-project ZIP exports, batch export and attachment bundling.
 Your conversations are never uploaded to AI Chat Archive servers.
