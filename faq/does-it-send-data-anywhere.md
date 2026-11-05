@@ -24,29 +24,39 @@ Markdown locally, and writes the file to your Downloads folder. There is no
 
 ## What the extension *does* talk to over the network
 
-Three things, and only three:
+Three categories of traffic:
 
-1. **`claude.ai`** — to fetch the Claude conversations and attachments being exported.
-   This is the same origin you're already logged into; the extension reuses your
-   existing cookies.
-2. **`chatgpt.com`** — the same, when you export a ChatGPT conversation: the extension
-   reads it with the session you already have on chatgpt.com.
+1. **The chat providers' APIs — `claude.ai` and `chatgpt.com`.** The extension fetches
+   the conversations being exported from the same origins you're already logged into,
+   reusing your existing cookies: `claude.ai` for Claude chats and `chatgpt.com` when
+   you export a ChatGPT conversation.
+2. **Provider-supplied file and image download hosts.** When an export includes
+   attachments or embedded images, the provider's API returns temporary signed
+   download URLs on its own storage/CDN infrastructure (for example, a pre-signed URL
+   on a storage host). The extension fetches those bytes directly from that host. The
+   host is chosen by Claude or ChatGPT and can vary per file; the bytes come to your
+   machine, never to us.
 3. **`api.polar.sh`** — *only* when you activate, renew, or periodically revalidate a
    paid license. The extension sends your license key to Polar (our payment provider)
    to verify it. It never sends your conversations.
 
-No analytics, no telemetry, no crash reports, no "phone-home" pings. If you run the
-extension with your browser's network tab open, you will see exactly these requests and
-nothing else.
+No analytics, no telemetry, no crash reports, no "phone-home" pings, and no server
+operated by AI Chat Archive appears anywhere in these flows.
 
 ## How you can verify this yourself
 
 - Open Chrome DevTools → Network tab before clicking Export.
 - Watch every request. You will see calls to `claude.ai` or `chatgpt.com` (to read the
-  chat), plus a request to `api.polar.sh` when a license is activated or revalidated.
+  chat), fetches of the provider-signed file and image URLs above when the export
+  includes attachments or images, and a request to `api.polar.sh` when a license is
+  activated or revalidated.
 - The extension's manifest declares `host_permissions` for `claude.ai`, `chatgpt.com`
-  and `api.polar.sh` only. The browser enforces these — the extension cannot reach any
-  other host even if the code tried to.
+  and `api.polar.sh` only. Those permissions grant privileged cross-origin access to
+  just those three origins; they are not a complete list of reachable hosts and not a
+  firewall — content scripts can still make ordinary requests the target site permits
+  via CORS, which is how the signed downloads above work. What the architecture rules
+  out is a server of ours receiving your chats: there is no AI Chat Archive host in
+  the data path at all.
 
 ## Why this matters
 

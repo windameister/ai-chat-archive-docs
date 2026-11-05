@@ -36,7 +36,10 @@ just promised.
 └──────────────────────┘                                └────────────────┘
 ```
 
-There is no fourth box. No AI Chat Archive server, no proxy, no analytics pipeline.
+There is no AI Chat Archive server, proxy, or analytics pipeline in this diagram.
+Paid exports that include attachments or images make one additional kind of request:
+the provider returns temporary signed download URLs on its own storage/CDN hosts, and
+the extension fetches those bytes directly (see below).
 
 ### While activating a paid license
 
@@ -63,9 +66,16 @@ Chrome enforces the permissions declared in `manifest.json`. AI Chat Archive dec
 | `storage` | Keep settings and license state (`chrome.storage.sync`) plus temporary local export data (`chrome.storage.local`). |
 | `unlimitedStorage` | Hold large PDF hand-off payloads (base64 images included) in local storage while an export renders. |
 
-The extension cannot reach any host not on this list. If the extension tried to POST
-your conversation to a third-party server, the browser would block the request — the
-manifest is the ceiling of what it can do. Files reach your Downloads folder through
+The declared `host_permissions` name the three origins the extension is granted
+*privileged* cross-origin access to: the two chat APIs and Polar. They are not a list
+of every host the extension can contact, and they are not a firewall: a content script
+can make the same ordinary cross-origin requests a web page can when the target allows
+CORS. The extension relies on this for one thing — paid exports fetch attachments and
+embedded images from temporary signed download URLs on the providers' own storage/CDN
+hosts; the URL host is chosen by the provider (Claude or ChatGPT) and can vary per
+file. What the architecture does rule out is any AI Chat Archive server in the data
+path: there is no host of ours that could receive your conversations, and no
+permission is requested that points at one. Files reach your Downloads folder through
 the normal browser print dialog and download flow, which need no special permission.
 
 ## Storage on your device
@@ -86,12 +96,16 @@ that Mac.)
 
 - **PDF hand-off payloads.** For a PDF export, the full conversation (including images
   embedded as base64) is passed from the chat tab to the extension's print page
-  through a local storage key. The print page deletes that key as soon as the PDF is
-  rendered or the page closes; payloads left behind by a closed tab are swept
-  automatically after a period of inactivity.
+  through a local storage key. The print page removes that key as soon as it has
+  received the payload, before rendering. Closing the print page instead asks the
+  source tab to cancel; it does not delete the key. A payload abandoned mid-export
+  (for example, by a closed tab) becomes eligible for cleanup after 15 minutes without
+  activity and is swept the next time a PDF export starts.
 - **Export-resume checkpoints.** Long batch and project exports record progress so an
   interrupted run can resume instead of starting over. The checkpoint is cleared when
-  the export finishes and is pruned if it sits unused for two weeks.
+  the export finishes. A checkpoint older than two weeks is removed the next time that
+  export scope is checked for resumable progress; there is no background timer, so an
+  export you never open again can leave its checkpoint beyond two weeks.
 
 These local copies never leave your device. The privacy guarantee is about *network
 upload*, not about storage: conversation content temporarily lives in the browser's
@@ -101,10 +115,11 @@ store your conversations anywhere outside your browser.
 ## How to verify
 
 - Open Chrome DevTools → **Network** tab before clicking Export.
-- Every request is visible. You will see only `claude.ai` or `chatgpt.com` traffic
-  during a conversation export, and a round-trip to `api.polar.sh` when a license is
-  activated or revalidated (the result is cached for a week, so this is not per
-  export).
+- Every request is visible. During an export you will see calls to `claude.ai` or
+  `chatgpt.com`, plus fetches of the provider-signed attachment/image URLs described
+  above when the export includes those; a round-trip to `api.polar.sh` happens only
+  when a license is activated or revalidated (the result is cached for a week, so
+  this is not per export).
 - Open the extension's `manifest.json` (via `chrome://extensions` → **Details** →
   **Inspect views: service worker** → the Sources tab). The declared permissions are
   authoritative.

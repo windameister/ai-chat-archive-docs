@@ -106,7 +106,9 @@ Versions follow Chrome's required numeric format (no semver suffixes).
 - Clean transcript: code blocks, tables, and CJK text render correctly;
   browsing/tool scaffolding and citation markers are stripped.
 - 100% local — reads `chatgpt.com` over your existing session. No account,
-  no upload, no telemetry.
+  no upload, no telemetry. (Later clarified: export processing is local and
+  chat content is not uploaded to our servers; license checks contact Polar
+  with the key only.)
 
 ## v0.3.8 — July 2026 — Export Cowork tasks
 
