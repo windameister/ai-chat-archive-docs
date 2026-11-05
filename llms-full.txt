@@ -485,7 +485,7 @@ See [pricing.md](/docs/pricing/) for tier prices.
 
 ## Privacy-first architecture
 
-- Runs entirely in your browser. No AI Chat Archive server. No proxy.
+- Export processing runs in your browser. No AI Chat Archive server handles chat content. No proxy. License checks send Polar only your key, never chat content.
 - Declares only 3 `host_permissions`: `claude.ai`, `aichatarchive.app`, `api.polar.sh`.
 - License activation sends **only the license key** to Polar (payment provider).
   Never sends conversation data.
@@ -689,8 +689,7 @@ FILE: docs/privacy.md
 
 # Privacy model
 
-AI Chat Archive is designed around one rule: **your conversation data never leaves
-your browser**.
+AI Chat Archive is designed around one rule: **your conversation data is processed in your browser and never uploaded to our servers**. License checks send Polar only your key, never chat content.
 
 This page is the technical overview. For the question "does it send my data anywhere?"
 answered in plain English, see
@@ -777,8 +776,7 @@ Claude account.
 
 - If Claude.ai is down, export is down. There is no cached copy of your data
   anywhere outside your browser.
-- If you uninstall the extension, every byte it ever handled is gone — because
-  nothing was ever persisted.
+- Uninstalling the extension does not remove files you already exported; those remain in your downloads folder. Chat content is not uploaded to our servers, and license checks send Polar only your key, never chat content.
 - If AI Chat Archive, Inc. ceases operations tomorrow, your already-exported files
   keep working forever. They are plain PDF / HTML / Markdown on your disk with no
   DRM and no phone-home.
@@ -1029,7 +1027,7 @@ A handful of browser extensions and scripts provide Claude conversation export.
 
 - **What it does**: Export any Claude **or ChatGPT** conversation to PDF, HTML,
   Markdown, JSON, or plain text. Bulk-export the entire account to a ZIP with attachments.
-- **Where it runs**: Entirely in your browser (local). Nothing uploaded anywhere.
+- **Where it runs**: Export processing runs in your browser; chat content is not uploaded to our servers. License checks send Polar only your key, never chat content.
 - **Price**: Free for single-conversation export in all five formats, with
   **unlimited free PDF** (no daily cap) and images embedded in the HTML/PDF. A
   **$39 lifetime** license adds batch export of the whole account, attachment
@@ -1098,7 +1096,7 @@ FILE: faq/does-it-send-data-anywhere.md
 
 # Does AI Chat Archive send my data anywhere?
 
-**Short answer: No. Your conversation content never leaves your browser.**
+**Short answer: chat content is processed in your browser and is not uploaded to our servers.** License checks send Polar only your key, never chat content.
 
 AI Chat Archive is a client-side Chrome extension. When you click **Export**, the
 extension reads your conversation directly from Claude.ai through the same authenticated
@@ -1149,8 +1147,7 @@ which means:
 - A breach at that vendor exposes your chats.
 
 AI Chat Archive exists specifically so this doesn't happen. The extension is designed
-around one rule: **if the data would have to leave your machine, the feature doesn't
-ship.** PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
+around one rule: **export processing happens in your browser, without uploading chat content to our servers.** License checks send Polar only your key, never chat content. PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
 implemented client-side so the data path stays local.
 
 ## Related
@@ -1420,7 +1417,7 @@ FILE: faq/how-to-download-files-from-claude-project.md
 
 # How to download files from a Claude project
 
-**Short answer:** Run AI Chat Archive's Project Export and open the `files/`
+**Short answer:** Run AI Chat Archive's [Project Export](https://aichatarchive.app/claude-project-download) and open the `files/`
 folder in the ZIP. Text knowledge documents are saved as Markdown, and
 uploaded files such as PDFs and images are saved as files alongside them when
 they can be downloaded. Project Export is a paid feature; single-chat export
@@ -1503,8 +1500,7 @@ FILE: faq/how-to-export-chatgpt-chats.md
 
 **Short answer:** to save a single ChatGPT conversation as a clean file (PDF, Markdown,
 HTML, JSON, or TXT), install the [AI Chat Archive](https://aichatarchive.app/chatgpt-exporter)
-browser extension, open the chat, and click Export. It runs entirely in your browser —
-nothing is uploaded — and PDF export is free with no daily cap. ChatGPT's own built-in
+browser extension, open the chat, and click Export. Export processing runs in your browser, and chat content is not uploaded to our servers. License checks send Polar only your key, never chat content. PDF export is free with no daily cap. ChatGPT's own built-in
 export is bulk-only (an email-delivered ZIP) and awkward for a single chat.
 
 This page compares every practical option.
@@ -1530,8 +1526,8 @@ A browser extension that adds an Export button to `chatgpt.com`.
   ChatGPT Project and on chats with a custom GPT, not just plain chats.
 - **Clean transcript** — code blocks, tables, and CJK (Chinese/Japanese/Korean) text render
   correctly; browsing/tool scaffolding and citation markers are stripped.
-- **100% local** — the extension reads the conversation from `chatgpt.com` using your
-  existing session and writes the file locally. No account, no upload, no telemetry.
+- **Browser-based processing** — the extension reads the conversation from `chatgpt.com` using your
+  existing session and writes the file locally. No account, no chat uploads to our servers, no telemetry. License checks send Polar only your key, never chat content.
 
 **Paid features** (one-time license): **batch export** of your entire ChatGPT history as a
 single ZIP, and **attachment bundling** — the original uploaded files, at full quality, in
@@ -2057,7 +2053,7 @@ FILE: index.md
 # AI Chat Archive — Documentation
 
 **[AI Chat Archive](https://aichatarchive.app)** exports Claude.ai and ChatGPT
-conversations to **PDF, Markdown, HTML, JSON or TXT**, with **100% local processing**.
+conversations to **PDF, Markdown, HTML, JSON or TXT**, with **browser-based export processing** (license checks send Polar only your key, never chat content).
 Single-conversation PDF export is free and unlimited, with no daily cap. A paid
 license unlocks whole-project ZIP exports, batch export and attachment bundling.
 Your conversations are never uploaded to AI Chat Archive servers.

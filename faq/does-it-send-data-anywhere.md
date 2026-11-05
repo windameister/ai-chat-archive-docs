@@ -1,10 +1,11 @@
 ---
+title: "Does Exporting Send My Data Anywhere? — AI Chat Archive Docs"
 description: "Does AI Chat Archive send data anywhere? Exports run in your browser; only Claude or ChatGPT is read for content, and Polar gets your key for license checks."
 ---
 
 # Does AI Chat Archive send my data anywhere?
 
-**Short answer: No. Your conversation content never leaves your browser.**
+**Short answer: chat content is processed in your browser and is not uploaded to our servers.** License checks send Polar only your key, never chat content.
 
 AI Chat Archive is a client-side Chrome extension. When you click **Export**, the
 extension reads your conversation directly from Claude.ai through the same authenticated
@@ -55,8 +56,7 @@ which means:
 - A breach at that vendor exposes your chats.
 
 AI Chat Archive exists specifically so this doesn't happen. The extension is designed
-around one rule: **if the data would have to leave your machine, the feature doesn't
-ship.** PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
+around one rule: **export processing happens in your browser, without uploading chat content to our servers.** License checks send Polar only your key, never chat content. PDF rendering, Markdown generation, attachment bundling, ZIP packaging — all
 implemented client-side so the data path stays local.
 
 ## Related

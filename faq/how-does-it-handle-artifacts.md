@@ -1,4 +1,5 @@
 ---
+title: "How Does It Handle Claude Artifacts? — AI Chat Archive Docs"
 description: "Claude Artifacts export: preserve code, SVG, HTML and Mermaid output in supported formats, with final versions inline and earlier versions kept in an appendix."
 ---
 

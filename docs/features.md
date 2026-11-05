@@ -100,7 +100,7 @@ See [pricing.md](pricing.md) for tier prices.
 
 ## Privacy-first architecture
 
-- Runs entirely in your browser. No AI Chat Archive server. No proxy.
+- Export processing runs in your browser. No AI Chat Archive server handles chat content. No proxy. License checks send Polar only your key, never chat content.
 - Declares only 3 `host_permissions`: `claude.ai`, `aichatarchive.app`, `api.polar.sh`.
 - License activation sends **only the license key** to Polar (payment provider).
   Never sends conversation data.

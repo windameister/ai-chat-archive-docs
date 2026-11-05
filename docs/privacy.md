@@ -4,8 +4,7 @@ description: "AI Chat Archive privacy: chats are processed in your browser with 
 
 # Privacy model
 
-AI Chat Archive is designed around one rule: **your conversation data never leaves
-your browser**.
+AI Chat Archive is designed around one rule: **your conversation data is processed in your browser and never uploaded to our servers**. License checks send Polar only your key, never chat content.
 
 This page is the technical overview. For the question "does it send my data anywhere?"
 answered in plain English, see
@@ -92,8 +91,7 @@ Claude account.
 
 - If Claude.ai is down, export is down. There is no cached copy of your data
   anywhere outside your browser.
-- If you uninstall the extension, every byte it ever handled is gone — because
-  nothing was ever persisted.
+- Uninstalling the extension does not remove files you already exported; those remain in your downloads folder. Chat content is not uploaded to our servers, and license checks send Polar only your key, never chat content.
 - If AI Chat Archive, Inc. ceases operations tomorrow, your already-exported files
   keep working forever. They are plain PDF / HTML / Markdown on your disk with no
   DRM and no phone-home.

@@ -1,4 +1,5 @@
 ---
+title: "Claude vs ChatGPT Exports Compared — AI Chat Archive Docs"
 description: "Claude vs ChatGPT export compared: account exports, single-chat options, formats, attachments and projects, plus when AI Chat Archive gives you cleaner files."
 ---
 
@@ -59,7 +60,7 @@ A handful of browser extensions and scripts provide Claude conversation export.
 
 - **What it does**: Export any Claude **or ChatGPT** conversation to PDF, HTML,
   Markdown, JSON, or plain text. Bulk-export the entire account to a ZIP with attachments.
-- **Where it runs**: Entirely in your browser (local). Nothing uploaded anywhere.
+- **Where it runs**: Export processing runs in your browser; chat content is not uploaded to our servers. License checks send Polar only your key, never chat content.
 - **Price**: Free for single-conversation export in all five formats, with
   **unlimited free PDF** (no daily cap) and images embedded in the HTML/PDF. A
   **$39 lifetime** license adds batch export of the whole account, attachment
