@@ -14,13 +14,14 @@ It takes about two minutes.
 3. When prompted, approve the permissions (see [Privacy](privacy.md) for what each
    permission does).
 
-The extension works in any Chromium-based browser: Chrome, Edge, Brave, Arc, Opera.
-Firefox is not currently supported.
+The extension works in Chrome and any Chromium-based browser (Edge, Brave, Arc,
+Opera, Vivaldi), as well as Firefox and Safari (Safari on macOS only).
 
 ## 2. Open a Claude.ai conversation
 
-Navigate to any conversation at <https://claude.ai>. The extension lights up only on
-`claude.ai` pages — it cannot see anything else.
+Navigate to any conversation at <https://claude.ai> (the extension also works on
+`chatgpt.com`). It lights up only on those two sites' pages — it cannot see anything
+else.
 
 ## 3. Click the extension icon
 

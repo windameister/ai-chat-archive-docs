@@ -57,32 +57,54 @@ Chrome enforces the permissions declared in `manifest.json`. AI Chat Archive dec
 
 | Permission | Why it's needed |
 |---|---|
-| `host_permissions: ["https://claude.ai/*"]` | Read conversations and attachments via the same API Claude.ai's own web app uses. |
-| `host_permissions: ["https://api.polar.sh/*"]` | Validate paid license keys. |
-| `downloads` | Write exported files into the Downloads folder. |
-| `storage` | Remember user settings (format preference, timestamp style, license key). |
+| `host_permissions: ["https://claude.ai/*"]` | Read Claude conversations and attachments via the same API Claude.ai's own web app uses. |
+| `host_permissions: ["https://chatgpt.com/*"]` | Read ChatGPT conversations the same way when you export from ChatGPT. |
+| `host_permissions: ["https://api.polar.sh/*"]` | Validate paid license keys and periodically revalidate them. |
+| `storage` | Keep settings and license state (`chrome.storage.sync`) plus temporary local export data (`chrome.storage.local`). |
+| `unlimitedStorage` | Hold large PDF hand-off payloads (base64 images included) in local storage while an export renders. |
 
 The extension cannot reach any host not on this list. If the extension tried to POST
-your conversation to a third-party server, Chrome would block the request — the
-manifest is the ceiling of what it can do.
+your conversation to a third-party server, the browser would block the request — the
+manifest is the ceiling of what it can do. Files reach your Downloads folder through
+the normal browser print dialog and download flow, which need no special permission.
 
-## Local storage
+## Storage on your device
 
-The extension stores only the following in Chrome's `chrome.storage.local`:
+Two different browser storage areas are used, and the distinction matters:
 
-- Your format preferences (PDF / HTML / Markdown).
-- Your timestamp style.
-- Your license key, if activated.
+**`chrome.storage.sync` — settings and license state**
 
-Never stored: conversation content, attachment bytes, or any identifier tied to your
-Claude account.
+- Your settings: format and theme preferences, timestamp style, and similar options.
+- Your license key and its last validation result, if you have activated a key.
+
+If you are signed into Chrome, Google synchronizes this data across devices via your
+Google account; we never have access to it. (In the Safari App Store build, the Apple
+in-app-purchase entitlement is kept in local storage instead, because it is tied to
+that Mac.)
+
+**`chrome.storage.local` — temporary export data**
+
+- **PDF hand-off payloads.** For a PDF export, the full conversation (including images
+  embedded as base64) is passed from the chat tab to the extension's print page
+  through a local storage key. The print page deletes that key as soon as the PDF is
+  rendered or the page closes; payloads left behind by a closed tab are swept
+  automatically after a period of inactivity.
+- **Export-resume checkpoints.** Long batch and project exports record progress so an
+  interrupted run can resume instead of starting over. The checkpoint is cleared when
+  the export finishes and is pruned if it sits unused for two weeks.
+
+These local copies never leave your device. The privacy guarantee is about *network
+upload*, not about storage: conversation content temporarily lives in the browser's
+own storage while an export is built, and is never uploaded to our servers. We do not
+store your conversations anywhere outside your browser.
 
 ## How to verify
 
 - Open Chrome DevTools → **Network** tab before clicking Export.
-- Every request is visible. You will see only `claude.ai` traffic during a conversation
-  export, and — if applicable — a single round-trip to `api.polar.sh` during license
-  activation.
+- Every request is visible. You will see only `claude.ai` or `chatgpt.com` traffic
+  during a conversation export, and a round-trip to `api.polar.sh` when a license is
+  activated or revalidated (the result is cached for a week, so this is not per
+  export).
 - Open the extension's `manifest.json` (via `chrome://extensions` → **Details** →
   **Inspect views: service worker** → the Sources tab). The declared permissions are
   authoritative.
