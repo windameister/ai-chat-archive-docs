@@ -27,11 +27,14 @@ conversations in one ZIP.
 
 1. Install AI Chat Archive and activate a paid license. (Single-chat export
    is free if you want to test first.)
-2. Open the project: a classic project at `claude.ai/project/<id>`, or a Beta
-   project at `claude.ai/code/project/<id>`.
-3. Click **Export this project (ZIP)** in the extension popup, or
-   **Export project** on the page, and pick Markdown, HTML, JSON or TXT for
-   the conversation transcripts.
+2. Open a classic project at `claude.ai/project/<uuid>` or
+   `claude.ai/cowork/project/<uuid>`, or a Beta project at
+   `claude.ai/code/project/chan_<id>`.
+3. In the extension popup, choose Markdown, HTML, JSON or TXT for the
+   transcripts, then click **Export this project (ZIP)**. Alternatively,
+   click **Export project** on the classic page or Beta project overview,
+   then choose a format. On a selected Beta thread, use the popup for the
+   whole-project ZIP.
 4. Wait while the extension retrieves the project files and conversations
    and builds the ZIP.
 5. Unzip the download, open the project-named folder, then open its `files/`

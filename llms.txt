@@ -5,8 +5,10 @@
 > free and unlimited, with no daily cap. A paid license unlocks whole-project ZIP
 > exports (instructions, knowledge files and conversations), batch export and
 > attachment bundling. Your conversations are never uploaded to AI Chat Archive
-> servers. Project ZIP transcripts support Markdown, HTML, JSON and TXT; PDF is
-> available for single-conversation exports.
+> servers. Classic projects (/project/<uuid> and /cowork/project/<uuid>) and
+> Projects Beta (/code/project/chan_<id>) are supported. Project ZIP transcripts
+> use Markdown, HTML, JSON or TXT; uploaded knowledge or Library PDFs are included
+> as files when downloadable. Single-chat PDF export uses the browser print dialog.
 
 This file follows the [llms.txt proposal](https://llmstxt.org/). For the full concatenated
 text of every document in this repository, see [`llms-full.txt`](/llms-full.txt).
