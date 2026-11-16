@@ -419,12 +419,13 @@ See the [format specs](/spec/) for the exact structure each one produces.
 |---|---|---|---|
 | **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free, including unlimited PDF exports with no daily cap |
 | **Batch export** | Every conversation in your account, as one ZIP | `claude.ai/chat/<id>` | Paid |
-| **Project export** | One whole project (Instructions, knowledge files, every conversation in it), as one ZIP | `claude.ai/project/<uuid>` | Paid |
+| **Project export** | One project with instructions, available knowledge or Library files and conversations, as a ZIP | `claude.ai/project/<uuid>`, `claude.ai/cowork/project/<uuid>` or `claude.ai/code/project/chan_<id>` | Pro |
 
 Batch and Project Export are mutually exclusive: the popup shows the one
 that fits the current page, and only one paid export can run at a time.
-Project Export supports Markdown / HTML / JSON / TXT (not PDF — same
-browser-print limitation as batch). See the
+Project transcripts support Markdown / HTML / JSON / TXT. Uploaded PDFs in
+the project's knowledge or Library area are included as files when downloadable;
+PDF transcripts use single-chat export and the browser print dialog. See the
 [how-to](/faq/how-to-export-claude-project/) for the step-by-step.
 
 ## What gets captured
@@ -475,7 +476,8 @@ Activates with a license key from <https://aichatarchive.app>. Unlocks:
 - **Bulk export** — every conversation on your Claude account in one ZIP.
 - **Project export** — one ZIP per Claude project, including the project's
   Instructions, knowledge files, and every conversation in it. Triggered
-  from `claude.ai/project/<uuid>` pages. See
+  from classic project pages (`/project/<uuid>` or `/cowork/project/<uuid>`)
+  and Projects Beta (`/code/project/chan_<id>`). See
   [the how-to](/faq/how-to-export-claude-project/).
 - **Include attachments in the ZIP** — bundle uploaded files and
   Claude-generated `present_files` alongside their transcripts. See the
@@ -625,8 +627,10 @@ Unlocks everything. Pick the tier that matches how you use Claude:
 
 - **Bulk export** every conversation on your Claude account into a single ZIP.
 - **Project export** — one ZIP per Claude project, bundling its
-  Instructions, knowledge files, and every conversation in it. Open any
-  `claude.ai/project/<uuid>` page to trigger it. See
+  instructions, available knowledge or Library files, and conversations.
+  Open a classic project at `claude.ai/project/<uuid>` or
+  `claude.ai/cowork/project/<uuid>`, or Projects Beta at
+  `claude.ai/code/project/chan_<id>`, and choose **Export this project (ZIP)**. See
   [the how-to](/faq/how-to-export-claude-project/).
 - **Include attachments** — uploaded files and Claude-generated `present_files`
   bundle alongside transcripts.
@@ -1230,10 +1234,17 @@ FILE: faq/does-it-work-with-projects.md
 
 # Does AI Chat Archive work with Claude Projects?
 
-**Yes** — and there's a dedicated **Project Export** mode that bundles the
-entire project (instructions, knowledge docs, all conversations, attachments)
-into one ZIP. Open any `claude.ai/project/<id>` page and you'll see the
-project-export button in the popup and a floating button on the page.
+**Yes.** AI Chat Archive Pro exports classic projects and Projects Beta as a
+ZIP with instructions, available knowledge or Library files (including uploaded
+PDFs), and conversations in Markdown, HTML, JSON or TXT. Open the project and
+choose **Export this project (ZIP)** in the toolbar popup. PDF transcripts
+are available through free single-chat export and the browser print dialog.
+
+Supported project pages are `claude.ai/project/<uuid>`,
+`claude.ai/cowork/project/<uuid>` and `claude.ai/code/project/chan_<id>`.
+The floating **Export project** button appears on classic project pages and
+the Beta project overview; on a selected Beta thread, use the popup for the
+whole-project ZIP. See [the walkthrough](/faq/how-to-export-claude-project/).
 
 Project Export shipped in v0.3.0 and is gated by the paid license, same as
 batch export.
@@ -1244,7 +1255,7 @@ Pick the one that matches your goal:
 
 | Goal | Use | Where |
 |---|---|---|
-| "I want everything from **this one project**" | **Project Export** (paid) | On a `claude.ai/project/<id>` page |
+| "I want everything from **this one project**" | **Project Export** (Pro) | On a classic or Beta project page (URLs above) |
 | "I want **every conversation** in my account — projects or not" | **Batch Export** (paid) | On a `claude.ai/chat/<id>` page |
 | "I just want **this one chat**" | Single-chat export (free) | On any conversation page |
 
@@ -1253,31 +1264,43 @@ import from a batch ZIP will import the same way from a project ZIP.
 
 ## What Project Export bundles
 
-A single ZIP, named after the project, containing:
+A ZIP archive, named after the project, containing:
 
 - **`README.md`** — overview: project name, ID, creator, dates, counts, and a
   note on what's not included.
 - **`metadata.json`** — machine-readable mirror of the project metadata.
 - **`instructions.md`** — the project's Instructions (the "prompt template"
   shown in the claude.ai sidebar), wrapped in a verbatim fenced block.
-- **`files/`** — everything from the project's "Files" panel:
+- **`files/`** — available knowledge files from the classic "Files" panel or
+  Beta Library:
   - Text knowledge docs as Markdown.
-  - Uploaded binaries (PDF, images, etc.) in their original format.
+  - Available uploaded binaries, including PDFs and images. Classic projects
+    may supply a preview or thumbnail when no original asset is available;
+    Beta Library files retain their folders and original bytes.
   - `_INDEX.md` — table listing every file with its type and date, written
     after all knowledge files have been added to the archive (and any
     cancelled tail recorded) so the names in the index match what was
     actually written.
   - `_SKIPPED.md` — only present if some files failed to download or you
     cancelled mid-run.
-- **`conversations/`** — one folder per chat, named `<date>_<title>`. Each
+- **`conversations/`** — one folder per chat, Cowork task or Beta thread,
+  named `<date>_<title>`. Beta exports include the project conversation,
+  imported conversations and continued threads with their original context. Each
   folder holds the transcript in your chosen format and, if **Include
-  attachments** is on, an `attachments/` subfolder. Same layout as
+  attachments** is on, available uploads in `attachments/` and Cowork files
+  in `outputs/`. Chat attachments follow the layout in
   [the batch-export ZIP](/spec/zip-bundle-structure/).
 - **`_INDEX.md`** — table of every conversation with status: `OK` /
-  `Skipped: empty` / `Failed: <error>` / `Not run` (the last appears when
+  `Skipped: <reason>` / `Failed: <error>` / `Incomplete: <reason>` /
+  `Not run` (the last appears when
   you cancel mid-run and some conversations were never reached).
-- **`_INCOMPLETE.md`** — only present if the `/docs` or `/files` listing call
-  failed; flags that the `files/` directory may be incomplete.
+- **`_INCOMPLETE.md`** — reports detected inventory or content omissions;
+  check it along with any per-conversation omission reports.
+
+Project knowledge and Library downloads do not depend on **Include
+attachments**; that setting adds available conversation uploads and outputs.
+Large exports can be split into ZIP parts; follow **How to combine the
+parts.txt** in the first part and keep all parts.
 
 ## Example ZIP layout
 
@@ -1299,7 +1322,7 @@ A single ZIP, named after the project, containing:
     2026-05-13_Auth-refactor/
       Auth-refactor.md
   _INDEX.md
-  _INCOMPLETE.md        # only if /docs or /files listing failed
+  _INCOMPLETE.md        # detected inventory or content omissions
 ```
 
 ## What's *not* in the export
@@ -1319,11 +1342,11 @@ A single ZIP, named after the project, containing:
 Project Export supports four of the five formats: **Markdown**, **HTML**,
 **JSON**, **TXT**.
 
-**PDF is not supported for Project Export.** PDF generation uses the
-browser's print pipeline, which can only run on one foregrounded chat at a
-time — the same constraint that excludes PDF from batch ZIP mode. If you
-need PDFs of project chats, open each one individually and use single-chat
-export.
+**Project transcripts cannot be exported as PDF.** Uploaded PDFs in the
+project's knowledge or Library area are still included as files in `files/`
+when downloadable. To save a project chat or Beta thread as a PDF transcript,
+open it individually and use free single-chat PDF export, then choose
+**Save as PDF** or print to PDF in the browser print dialog.
 
 ## Related
 
@@ -1507,11 +1530,14 @@ conversations in one ZIP.
 
 1. Install AI Chat Archive and activate a paid license. (Single-chat export
    is free if you want to test first.)
-2. Open the project: a classic project at `claude.ai/project/<id>`, or a Beta
-   project at `claude.ai/code/project/<id>`.
-3. Click **Export this project (ZIP)** in the extension popup, or
-   **Export project** on the page, and pick Markdown, HTML, JSON or TXT for
-   the conversation transcripts.
+2. Open a classic project at `claude.ai/project/<uuid>` or
+   `claude.ai/cowork/project/<uuid>`, or a Beta project at
+   `claude.ai/code/project/chan_<id>`.
+3. In the extension popup, choose Markdown, HTML, JSON or TXT for the
+   transcripts, then click **Export this project (ZIP)**. Alternatively,
+   click **Export project** on the classic page or Beta project overview,
+   then choose a format. On a selected Beta thread, use the popup for the
+   whole-project ZIP.
 4. Wait while the extension retrieves the project files and conversations
    and builds the ZIP.
 5. Unzip the download, open the project-named folder, then open its `files/`
@@ -1710,7 +1736,8 @@ A Chrome extension purpose-built for Claude export.
   widgets sandboxed).
 - Timestamps preserved in your chosen format (local / UTC / ISO-8601).
 - Optional: include Claude's thinking blocks, or tool-call metadata.
-- A single click. No copy-paste, no print dialog, no manual cleanup.
+- No copy-paste or manual cleanup. For PDF, choose **Save as PDF** or print
+  to PDF in the browser print dialog.
 
 **For bulk backup** (all your conversations at once, including attachments):
 
@@ -1852,152 +1879,190 @@ FILE: faq/how-to-export-claude-project.md
 
 # How to export a Claude.ai project
 
-Claude.ai groups related conversations into **Projects** — each with its
-own custom Instructions and shared knowledge files. The standard
-**Save to project** menu in Claude.ai does not offer any way to export a
-project as a whole; you can only export individual chats one at a time.
+Open the project page and choose **Export this project (ZIP)** in AI Chat
+Archive Pro. Classic projects and **Projects Beta** are supported. The ZIP
+includes instructions, available knowledge or Library files (including
+uploaded PDFs), and conversations in **Markdown, HTML, JSON or TXT**.
+Project transcripts cannot be exported as PDF; to save an individual chat
+as PDF, use single-chat export and the browser's print dialog.
 
-AI Chat Archive (v0.3.0+) adds a dedicated **Project Export** mode that
-bundles an entire project — Instructions, knowledge files, every
-conversation, every attachment — into one ZIP. This page walks through it
-end to end.
+> **See the [Claude project download page](https://aichatarchive.app/claude-project-download)**
+> for installation links, a demo, and an overview of what the ZIP includes.
 
-> Project Export is a paid feature, gated by the same license as Batch
-> Export. See [pricing](/docs/pricing/) for tiers and the
-> [features page](/docs/features/) for what every paid plan includes.
+Project Export requires **AI Chat Archive Pro**, separate from your Claude
+subscription. The website's **Lifetime license is $39**, paid once, with a
+**14-day refund window**. See [pricing](/docs/pricing/) for all plans and
+the [refund policy](https://aichatarchive.app/refund) for details. Single-chat
+export is free in all five formats: PDF, Markdown, HTML, JSON and TXT.
 
 ## Step 1: Open the project page
 
-Navigate to the project you want to export:
+Install AI Chat Archive and activate Pro. For a website purchase, enter your
+license key in the extension popup and click **Apply**. Safari purchases use
+Apple's in-app purchase flow through **Upgrade to Pro** in the popup.
 
-```
-https://claude.ai/project/<project-uuid>
-```
+While signed in to Claude, open the project you want to download from
+**Projects** or **Projects Beta**. The extension recognizes these URLs:
 
-You can get there from the **Projects** section in the Claude.ai sidebar,
-or by clicking the project chip at the top of any chat that belongs to it.
+| Project page | Supported URL |
+|---|---|
+| Classic project | `https://claude.ai/project/<uuid>` |
+| Project under Cowork | `https://claude.ai/cowork/project/<uuid>` |
+| Projects Beta | `https://claude.ai/code/project/chan_<id>` |
 
-The extension only shows the Project Export button when the URL matches
-`/project/<uuid>` — not on plain `/chat/<id>` pages.
+Use your project's actual URL: classic project IDs are UUIDs, while Beta
+project IDs start with `chan_`. A standalone chat at `/chat/<uuid>` or a
+Cowork task at `/cowork/cse_<id>` has its own export controls; open the
+parent project for a whole-project ZIP.
 
 ## Step 2: Open the extension and pick a format
 
-Click the AI Chat Archive icon in the toolbar to open the popup, then pick
-your format:
+Click the AI Chat Archive toolbar icon, then choose a transcript format:
 
-- **Markdown** (`.md`) — for Obsidian, Notion, grep, future ingestion.
-- **HTML** (`.html`) — self-contained per-chat archive, browsable offline.
-- **JSON** (`.json`) — programmatic ingestion / custom pipelines.
-- **TXT** (`.txt`) — compliance archives, search indexes, raw text.
+- **Markdown** (`.md`) — editable notes for Obsidian, Notion or a text editor.
+- **HTML** (`.html`) — conversations you can read in a browser offline.
+- **JSON** (`.json`) — structured data for scripts and other tools.
+- **Plain text** (`.txt`) — a text copy without Markdown or HTML formatting.
 
-**PDF is not supported for Project Export.** Use single-chat export if you
-specifically need a PDF for one conversation in the project.
+This choice applies to the **conversation transcripts**. It does not
+convert your uploaded project files. Project Export always tries to download
+the knowledge or Library files, regardless of the **Include attachments in
+the ZIP** setting. Turn that setting on if you also want available uploads
+and generated files from the conversations, including Cowork outputs.
 
-If you want to bundle uploaded files alongside the transcripts, check
-**Include attachments in the ZIP** in the popup.
+### Are uploaded PDFs included?
+
+**Yes, when downloadable.** PDFs uploaded to the project's knowledge area or
+Library are saved as files in `files/` inside the ZIP. Beta Library files
+retain their folder structure and original bytes. For classic projects, the
+exporter uses the original document when available, but may use a preview
+or thumbnail if that is the asset Claude provides. Open important files to
+check the saved version; failed downloads appear in `files/_SKIPPED.md`.
+
+### Can project chat transcripts be PDFs?
+
+**Project ZIP transcripts use Markdown, HTML, JSON or TXT, not PDF.** To
+save a PDF of a project chat or Beta thread, open that conversation, choose
+single-chat **PDF** export, and select **Save as PDF** or your system's
+print-to-PDF option in the browser print dialog. This is free, with no daily
+cap. PDF rendering happens in your browser.
 
 ## Step 3: Click "Export this project"
 
-You have two equivalent triggers:
+Choose either entry point:
 
-- **Popup**: the paid card on a project page shows an **Export this
-  project (ZIP)** button. Click it.
-- **Floating action button on the page**: while on a `/project/<id>` page,
-  AI Chat Archive injects a small floating button. Click it to start the
-  same export without opening the popup. The floating button shows a live
-  progress panel during the run.
+- **Toolbar popup:** click **Export this project (ZIP)** after choosing
+  your format. This works on classic and Beta project pages, including a
+  Beta page with a thread selected.
+- **On-page button:** from the classic project page or the Beta project
+  overview, click **Export project**, then choose Markdown, HTML, JSON or
+  Plain text from its menu to start the ZIP export.
 
-Free users see an upsell variant of the button instead, which opens the
-checkout page.
+On Projects Beta, the popup also offers **Export project conversation** or
+**Export selected conversation** for a single transcript. When a Beta thread
+or imported conversation is selected, the floating **Export** button also
+exports that selection. For the whole project, use **Export this project
+(ZIP)** in the popup or return to the project overview.
 
-## Step 4: Watch the progress
+## Step 4: Keep the Claude tab open
 
-Project Export runs in this order:
+The extension retrieves the project's instructions, knowledge or Library
+files, and conversations, then builds the archive in your browser. Beta
+archives include the project conversation, threads, imported chats and
+Cowork tasks. Continued threads include their original context and new
+replies; an imported conversation already included in a continuation is not
+exported again as a separate item. Classic archives also include associated
+Cowork tasks when accessible.
 
-1. **Lists knowledge docs** — fetches the project's text knowledge from
-   `/projects/<id>/docs`.
-2. **Lists files** — fetches binary uploads from `/projects/<id>/files`.
-3. **Writes the files index** — once all knowledge files have been added
-   to the archive (or their cancelled tail recorded), `files/_INDEX.md`
-   is written so it reflects the actual names that landed.
-4. **Iterates conversations** — for each chat in the project, fetches the
-   full transcript and (if enabled) any attachments.
-5. **Writes the conversation index** — `_INDEX.md` is added with the
-   per-conversation status of each entry.
-6. **Finalizes** — generates and downloads the ZIP.
+You can close the extension popup while the export runs, but keep the Claude
+tab open. Use **Cancel** in the popup to stop. The archive records unreached
+conversations as `Not run` and remaining knowledge files as cancelled.
 
-The popup progress bar and the on-page floating panel both reflect the
-current step. You can cancel mid-run: conversations that were never
-reached are marked **`Not run`** in `_INDEX.md`, and any remaining
-knowledge files are logged in `files/_SKIPPED.md` with reason `cancelled
-by user`.
+Large exports can download as **several ZIP parts**. Allow multiple
+downloads if your browser asks, keep every part, and follow **How to combine
+the parts.txt** in the first part to extract them into the same folder. The
+last part contains the conversation index. If an interrupted export offers
+**Resume previous export** in the popup, use it to continue with the same
+format and attachment setting.
 
-## Step 5: Open the ZIP
+## Step 5: Open and check the ZIP
 
-The ZIP is named after the project (sanitized for filesystem safety).
-Inside, the layout is:
+The archive uses the project name. A typical Markdown export contains:
 
-```
+```text
 <Project Name>/
-  README.md             # project overview + notes on what's NOT included
-  metadata.json         # machine-readable project metadata
-  instructions.md       # project Instructions (prompt template)
+  README.md             # project overview and exclusions
+  metadata.json         # project metadata
+  instructions.md       # custom instructions
   files/
-    _INDEX.md           # table of every file with type + date
-    <text docs + binaries>
-    _SKIPPED.md         # only when downloads failed or you cancelled
+    _INDEX.md           # included project files
+    research.pdf        # an uploaded PDF, when downloadable
+    notes.md
+    _SKIPPED.md         # file failures or cancellations, when present
   conversations/
     <date>_<title>/
-      <title>.<ext>     # transcript in your chosen format
-      attachments/      # only when 'Include attachments' was on
-  _INDEX.md             # OK / Skipped: empty / Failed: <error> / Not run
-  _INCOMPLETE.md        # only when /docs or /files listing failed
+      <title>.md        # transcript in the format you selected
+      attachments/      # available chat attachments, when enabled
+      outputs/          # available Cowork outputs, when enabled
+  _INDEX.md             # conversation status and ZIP part, if applicable
+  _INCOMPLETE.md        # detected inventory or content omissions
 ```
 
-The `conversations/` folder follows the same naming and attachment
-conventions as the [ZIP bundle structure spec](/spec/zip-bundle-structure/),
-so importers that already handle batch ZIPs handle project ZIPs without
-changes.
+The layout varies with the project content and export settings. Beta Library
+subfolders remain under `files/`. Individual conversation folders can also
+contain `_SKIPPED.md` and `_INCOMPLETE.md` reports.
 
-## What's not included (and why)
+Start with the root `_INDEX.md` and `files/_INDEX.md`, then review any
+omission reports. To keep only the project documents, copy `files/` from
+the extracted archive; keep `instructions.md` too if you need the setup.
+See [how to download project files](/faq/how-to-download-files-from-claude-project/)
+for more detail.
 
-- **Memory.** The project "Memory" panel in the claude.ai UI is not exposed
-  by any reachable REST endpoint. The `README.md` inside the ZIP states
-  this explicitly so future readers know the omission is intentional, not
-  an export bug. Project Instructions and knowledge docs — both of which
-  you edit directly — are exported in full.
-- **Sharing / collaborator info.** For privacy, the export does not list
-  who else has access to the project.
-- **Workspace UI state.** Sidebar layout, pinned messages, and similar
-  interface state are not project content.
+## What's not included
+
+- **Automatic project Memory.** Custom instructions and accessible knowledge
+  or Library files are exported separately.
+- **Sharing or collaborator settings and workspace UI state**, such as the
+  sidebar layout.
+- **Scheduled-task definitions, repository clones and connector
+  configuration** in Projects Beta.
+- **Unavailable file content.** Detected omissions are reported. Cowork
+  files may fall back to a durable copy with a warning if their latest
+  version cannot be verified. Shell-created files with no visible output
+  path or delivery record may be missing.
 
 ## Troubleshooting
 
-**The button doesn't appear.**
-Confirm the URL is `claude.ai/project/<uuid>`, not `claude.ai/chat/<id>`.
-Project Export deliberately hides on chat pages — use Batch Export there.
+**The project export button is missing.**
+Check the URL against the three supported formats above. On a selected Beta
+thread, use the toolbar popup's project action or return to the project
+overview. If the extension was just installed or updated, reload the Claude
+tab. If you have hidden the floating button in settings, use the popup.
 
-**I see an "Upgrade" / upsell button instead.**
-Project Export is a paid feature. Activate a license in the popup and the
-button flips to the working variant without needing a reload.
+**The project button is disabled or asks me to upgrade.**
+Choose Markdown, HTML, JSON or TXT instead of PDF for the project ZIP. If
+the button asks for an upgrade, activate AI Chat Archive Pro; a Claude
+subscription alone does not unlock it.
 
-**The export stops with `_INCOMPLETE.md` in the ZIP.**
-The `/docs` or `/files` listing call failed (network error, expired
-session). Re-run while signed in. The conversations folder is still
-populated normally; only the knowledge `files/` directory may be partial.
+**A file or conversation is missing.**
+Check `_INDEX.md`, `files/_SKIPPED.md`, and any `_INCOMPLETE.md` reports at
+the project root or inside conversation folders. They identify detected
+listing, transcript or download problems. Retry while signed in with access
+to the project. A warning about an unavailable source does not mean the
+extension can recover it.
 
-**I started Batch Export while Project Export was running (or vice
-versa).**
-The extension blocks this with a reciprocal mutex — one paid export at a
-time. Wait for the running one to finish or cancel it.
+**Another export is already running.**
+Wait for it to finish or cancel it before starting another project or batch
+export in the same tab. The extension also prevents exporting the same
+project in two tabs at once.
 
 ## Related
 
+- [Claude project download: setup and demo](https://aichatarchive.app/claude-project-download)
 - [Does AI Chat Archive work with Claude Projects?](/faq/does-it-work-with-projects/)
 - [How to export a single Claude chat](/faq/how-to-export-claude-chat/)
 - [ZIP bundle structure](/spec/zip-bundle-structure/)
 - [Pricing](/docs/pricing/)
-- [Features](/docs/features/)
 
 
 ==============================================================
@@ -2091,12 +2156,14 @@ what you need:
 
 ## My conversations have attachments. Does that change anything?
 
-Yes — **only HTML and Markdown (in ZIP mode) preserve attachments**. PDF
-can't bundle binaries.
+Yes — **HTML, Markdown, JSON and TXT can bundle available attachments in a
+ZIP with Pro**. A PDF transcript cannot bundle separate files. Uploaded
+project knowledge or Library PDFs can still be downloaded as files through
+[Project Export](/faq/how-to-export-claude-project/).
 
 So if your workflow is "save this conversation + the PDFs I uploaded":
 
-1. Pick **HTML** or **Markdown**.
+1. Pick **HTML**, **Markdown**, **JSON** or **TXT**.
 2. Check **Include attachments in the ZIP** (paid feature).
 3. You get a folder with the transcript + an `attachments/` subfolder.
 
@@ -3069,8 +3136,8 @@ ai-chat-archive-{YYYY-MM-DD}-{HHMMSS}.zip
 
 - Exactly one **top-level folder per conversation**. No shared flat directory.
 - Folder name is `{created_at_date}_{safe_title}`.
-- Each folder contains a single transcript file — `.md` or `.html` depending on the
-  format the user picked — named after the conversation's safe title.
+- Each folder contains a transcript file — `.md`, `.html`, `.json` or `.txt`
+  depending on the format the user picked — named after the conversation's safe title.
 - If the conversation had attachments and the user opted to bundle them, an
   `attachments/` subfolder sits alongside the transcript.
 - If *some* attachments failed to download (private files, expired URLs, etc.), the
@@ -3103,9 +3170,13 @@ the format:
 
 - `.md` — see [Markdown format](/spec/markdown-format/)
 - `.html` — see [HTML format](/spec/html-format/)
+- `.json` — structured conversation data
+- `.txt` — plain text
 
-PDF is not supported in ZIP mode because PDF generation uses the browser's print
-pipeline, which cannot be batched.
+PDF **transcripts** are not supported in ZIP mode: single-chat PDF export uses
+the browser's print dialog. Uploaded PDFs can still be bundled as files with
+Pro. Project knowledge or Library PDFs are saved in `files/` when downloadable;
+see [Project Export](/faq/how-to-export-claude-project/).
 
 ## `attachments/` subfolder
 

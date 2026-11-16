@@ -90,12 +90,14 @@ what you need:
 
 ## My conversations have attachments. Does that change anything?
 
-Yes — **only HTML and Markdown (in ZIP mode) preserve attachments**. PDF
-can't bundle binaries.
+Yes — **HTML, Markdown, JSON and TXT can bundle available attachments in a
+ZIP with Pro**. A PDF transcript cannot bundle separate files. Uploaded
+project knowledge or Library PDFs can still be downloaded as files through
+[Project Export](how-to-export-claude-project.md).
 
 So if your workflow is "save this conversation + the PDFs I uploaded":
 
-1. Pick **HTML** or **Markdown**.
+1. Pick **HTML**, **Markdown**, **JSON** or **TXT**.
 2. Check **Include attachments in the ZIP** (paid feature).
 3. You get a folder with the transcript + an `attachments/` subfolder.
 

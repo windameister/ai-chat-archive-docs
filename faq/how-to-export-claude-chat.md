@@ -63,7 +63,8 @@ A Chrome extension purpose-built for Claude export.
   widgets sandboxed).
 - Timestamps preserved in your chosen format (local / UTC / ISO-8601).
 - Optional: include Claude's thinking blocks, or tool-call metadata.
-- A single click. No copy-paste, no print dialog, no manual cleanup.
+- No copy-paste or manual cleanup. For PDF, choose **Save as PDF** or print
+  to PDF in the browser print dialog.
 
 **For bulk backup** (all your conversations at once, including attachments):
 

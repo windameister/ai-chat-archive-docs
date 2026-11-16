@@ -32,12 +32,13 @@ See the [format specs](../spec/) for the exact structure each one produces.
 |---|---|---|---|
 | **Single-chat export** | The one open conversation | Any `claude.ai/chat/<id>` | Free, including unlimited PDF exports with no daily cap |
 | **Batch export** | Every conversation in your account, as one ZIP | `claude.ai/chat/<id>` | Paid |
-| **Project export** | One whole project (Instructions, knowledge files, every conversation in it), as one ZIP | `claude.ai/project/<uuid>` | Paid |
+| **Project export** | One project with instructions, available knowledge or Library files and conversations, as a ZIP | `claude.ai/project/<uuid>`, `claude.ai/cowork/project/<uuid>` or `claude.ai/code/project/chan_<id>` | Pro |
 
 Batch and Project Export are mutually exclusive: the popup shows the one
 that fits the current page, and only one paid export can run at a time.
-Project Export supports Markdown / HTML / JSON / TXT (not PDF — same
-browser-print limitation as batch). See the
+Project transcripts support Markdown / HTML / JSON / TXT. Uploaded PDFs in
+the project's knowledge or Library area are included as files when downloadable;
+PDF transcripts use single-chat export and the browser print dialog. See the
 [how-to](../faq/how-to-export-claude-project.md) for the step-by-step.
 
 ## What gets captured
@@ -88,7 +89,8 @@ Activates with a license key from <https://aichatarchive.app>. Unlocks:
 - **Bulk export** — every conversation on your Claude account in one ZIP.
 - **Project export** — one ZIP per Claude project, including the project's
   Instructions, knowledge files, and every conversation in it. Triggered
-  from `claude.ai/project/<uuid>` pages. See
+  from classic project pages (`/project/<uuid>` or `/cowork/project/<uuid>`)
+  and Projects Beta (`/code/project/chan_<id>`). See
   [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments in the ZIP** — bundle uploaded files and
   Claude-generated `present_files` alongside their transcripts. See the

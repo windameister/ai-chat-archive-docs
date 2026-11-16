@@ -31,8 +31,8 @@ ai-chat-archive-{YYYY-MM-DD}-{HHMMSS}.zip
 
 - Exactly one **top-level folder per conversation**. No shared flat directory.
 - Folder name is `{created_at_date}_{safe_title}`.
-- Each folder contains a single transcript file — `.md` or `.html` depending on the
-  format the user picked — named after the conversation's safe title.
+- Each folder contains a transcript file — `.md`, `.html`, `.json` or `.txt`
+  depending on the format the user picked — named after the conversation's safe title.
 - If the conversation had attachments and the user opted to bundle them, an
   `attachments/` subfolder sits alongside the transcript.
 - If *some* attachments failed to download (private files, expired URLs, etc.), the
@@ -65,9 +65,13 @@ the format:
 
 - `.md` — see [Markdown format](markdown-format.md)
 - `.html` — see [HTML format](html-format.md)
+- `.json` — structured conversation data
+- `.txt` — plain text
 
-PDF is not supported in ZIP mode because PDF generation uses the browser's print
-pipeline, which cannot be batched.
+PDF **transcripts** are not supported in ZIP mode: single-chat PDF export uses
+the browser's print dialog. Uploaded PDFs can still be bundled as files with
+Pro. Project knowledge or Library PDFs are saved in `files/` when downloadable;
+see [Project Export](../faq/how-to-export-claude-project.md).
 
 ## `attachments/` subfolder
 

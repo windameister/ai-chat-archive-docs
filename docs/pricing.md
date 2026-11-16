@@ -33,8 +33,10 @@ Unlocks everything. Pick the tier that matches how you use Claude:
 
 - **Bulk export** every conversation on your Claude account into a single ZIP.
 - **Project export** — one ZIP per Claude project, bundling its
-  Instructions, knowledge files, and every conversation in it. Open any
-  `claude.ai/project/<uuid>` page to trigger it. See
+  instructions, available knowledge or Library files, and conversations.
+  Open a classic project at `claude.ai/project/<uuid>` or
+  `claude.ai/cowork/project/<uuid>`, or Projects Beta at
+  `claude.ai/code/project/chan_<id>`, and choose **Export this project (ZIP)**. See
   [the how-to](../faq/how-to-export-claude-project.md).
 - **Include attachments** — uploaded files and Claude-generated `present_files`
   bundle alongside transcripts.
