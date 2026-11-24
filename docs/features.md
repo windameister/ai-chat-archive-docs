@@ -124,8 +124,11 @@ Scope discipline keeps the product sharp. The following are explicitly out of sc
 - ❌ Editing, searching, or manipulating conversations inside Claude.ai (that's a
   different product category).
 - ❌ Syncing exports to cloud storage. Your OS already does this better.
-- ❌ Scheduled / automatic background exports without your click. This would require
-  standing permissions we don't want.
+- ❌ Server-side scheduled exports or uploads of your chats anywhere. Scheduled backups
+  exist only as an **optional, local-only** paid feature (Chrome/Edge): daily or weekly
+  ZIPs saved to `Downloads/AI Chat Archive Backups/` on your computer, off by default and
+  never uploaded. Its permissions (`alarms`, `offscreen`, `downloads`) are optional and
+  only requested when you turn it on.
 - ❌ Exporting Gemini or Copilot conversations. Maybe later — not today.
   (ChatGPT **is** supported now — see
   [How to export a ChatGPT conversation](../faq/how-to-export-chatgpt-chats.md).)

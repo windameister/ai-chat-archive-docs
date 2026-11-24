@@ -511,8 +511,11 @@ Scope discipline keeps the product sharp. The following are explicitly out of sc
 - ❌ Editing, searching, or manipulating conversations inside Claude.ai (that's a
   different product category).
 - ❌ Syncing exports to cloud storage. Your OS already does this better.
-- ❌ Scheduled / automatic background exports without your click. This would require
-  standing permissions we don't want.
+- ❌ Server-side scheduled exports or uploads of your chats anywhere. Scheduled backups
+  exist only as an **optional, local-only** paid feature (Chrome/Edge): daily or weekly
+  ZIPs saved to `Downloads/AI Chat Archive Backups/` on your computer, off by default and
+  never uploaded. Its permissions (`alarms`, `offscreen`, `downloads`) are optional and
+  only requested when you turn it on.
 - ❌ Exporting Gemini or Copilot conversations. Maybe later — not today.
   (ChatGPT **is** supported now — see
   [How to export a ChatGPT conversation](/faq/how-to-export-chatgpt-chats/).)
@@ -760,6 +763,17 @@ Chrome enforces the permissions declared in `manifest.json`. AI Chat Archive dec
 | `storage` | Keep settings and license state (`chrome.storage.sync`) plus temporary local export data (`chrome.storage.local`). |
 | `unlimitedStorage` | Hold large PDF hand-off payloads (base64 images included) in local storage while an export renders. |
 
+Optional permissions, requested only if you turn on **local auto-backup** (paid, Chrome/Edge and
+other Chromium browsers, off by default). Nothing is asked for at install or update time;
+turning the feature off gives them back, and revoking any of them in `chrome://extensions`
+turns the feature off:
+
+| Optional permission | Why it's needed |
+|---|---|
+| `alarms` | Wake the extension on your daily or weekly schedule, and catch up a missed backup the next time the browser is open. |
+| `offscreen` | Build the backup ZIP in a hidden extension page, using the same claude.ai reads as a normal export. |
+| `downloads` | Save the finished ZIP into `Downloads/AI Chat Archive Backups/` without a Save dialog. Nothing is uploaded. |
+
 The declared `host_permissions` name the three origins the extension is granted
 *privileged* cross-origin access to: the two chat APIs and Polar. They are not a list
 of every host the extension can contact, and they are not a firewall: a content script
@@ -771,8 +785,10 @@ temporary signed download URLs on storage/CDN hosts it chooses; those are fetche
 without credentials, because the signature already authorizes them, and the host can
 vary per file. What the architecture does rule out is any AI Chat Archive server in the data
 path: there is no host of ours that could receive your conversations, and no
-permission is requested that points at one. Files reach your Downloads folder through
-the normal browser print dialog and download flow, which need no special permission.
+permission is requested that points at one. Manual exports reach your Downloads folder
+through the normal browser print dialog and download flow, which need no special
+permission; only the optional auto-backup uses the `downloads` permission, and it writes
+to your own disk only.
 
 ## Storage on your device
 
@@ -800,8 +816,13 @@ that Mac.)
 - **Export-resume checkpoints.** Long batch and project exports record progress so an
   interrupted run can resume instead of starting over. The checkpoint is cleared when
   the export finishes. A checkpoint older than two weeks is removed the next time that
-  export scope is checked for resumable progress; there is no background timer, so an
-  export you never open again can leave its checkpoint beyond two weeks.
+  export scope is checked for resumable progress; checkpoint cleanup has no background
+  timer, so an export you never open again can leave its checkpoint beyond two weeks.
+  (The optional auto-backup's schedule alarm only runs backups; it doesn't sweep
+  checkpoints.)
+- **Auto-backup state** (only if you turned it on): its settings, schedule and last
+  result (time, outcome, ZIP size). No chat content; the backup ZIP itself goes straight
+  to your Downloads folder.
 
 These local copies never leave your device. The privacy guarantee is about *network
 upload*, not about storage: conversation content temporarily lives in the browser's
